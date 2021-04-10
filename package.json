@@ -1,0 +1,36 @@
+{
+  "name": "sqledit",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "concurrently --kill-others \"gulp watch\" \"npm run start\""
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/core": "^7.10.4",
+    "@babel/preset-env": "^7.10.4",
+    "@fullhuman/postcss-purgecss": "^2.3.0",
+    "alpinejs": "^2.4.1",
+    "autoprefixer": "^9.8.5",
+    "babelify": "^10.0.0",
+    "browserify": "^16.5.1",
+    "concurrently": "^5.2.0",
+    "electron": "^9.1.0",
+    "electron-reload": "^1.5.0",
+    "gulp": "^4.0.2",
+    "gulp-buffer": "0.0.2",
+    "gulp-postcss": "^8.0.0",
+    "gulp-rename": "^2.0.0",
+    "gulp-tap": "^2.0.0",
+    "gulp-uglify": "^3.0.2",
+    "gulp-uglifycss": "^1.1.0",
+    "postcss-custom-properties": "^9.1.1",
+    "postcss-import": "^12.0.1",
+    "postcss-nested": "^4.2.3",
+    "tailwindcss": "^1.4.6",
+    "tailwindcss-spinner": "^1.0.0"
+  }
+}

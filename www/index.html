@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>SQLEdit</title>
+		<link href="dist/app.css" rel="stylesheet" />
+	</head>
+	<body class="w-full h-full p-0 m-0 overflow-x-hidden overflow-y-scroll font-sans text-base bg-blue-100 xl:text-lg" x-data="App.start('.js-file', '.js-filterby', '.js-text-input')">
+		<main class="absolute top-0 right-0 bottom-0 left-0 p-0 m-0">
+			<nav class="fixed top-0 left-0 right-0 bg-blue-900 text-white h-10 border-b-2 border-white flex flex-wrap items-center">
+				<span class="inline-block">
+					<!-- File Picker -->
+					<input type="file" class="hidden js-file" accept=".sql,.dump,.txt" @change="loadFile" @blur="loadFile">
+					<a @click="openFilePicker" class="outline-none text-white px-2 py-2 cursor-pointer hover:bg-blue-700">Open...</a>
+				</span>
+
+				<span class="absolute right-0">
+					<a @click="clearApp" class="outline-none text-white px-2 py-2 cursor-pointer hover:bg-blue-700">Clear</a>
+				</span>
+			</nav>
+
+			<div class="h-full pt-10 flex items-center justify-center">
+				<div class="w-full h-full">
+					<div class="flex bg-white h-full">
+						<div class="w-64 xl:w-1/4 bg-blue-100 border-r border-blue-200 p-2">
+							<div class="text-black">
+								<div class="font-semibold text-lg italic text-center">
+									<span x-text="tableName"></span>
+								</div>
+								<div class="h-4">
+									<span class="text-xs float-right" x-text="'Columns: ' + dbColumns.length"></span>
+								</div>
+							</div>
+							<div class="mt-2 relative">
+								<input type="text" class="text-sm w-full px-2 py-1 border border-blue-200 outline-none js-filterby" placeholder="Search..." x-on:keyup="filterColumns">
+								<span class="absolute top-0 h-4 cursor-pointer" style="right: 10px" @click="resetFilter" x-show="filterColumnsBy.length > 0">x</span>
+							</div>
+							<div class="mt-3 pt-1 border-t border-blue-200">
+								<ul class="text-sm">
+									<template x-for="(column, index) in filteredColumns" :key="index">
+										<li class="px-1 hover:bg-blue-200 cursor-pointer" :class="{ 'underline italic': filterColumnsBy === column }" @click="selectColumn(column)">
+											<a href="#" x-text="column"></a>
+										</li>
+									</template>
+								</ul>
+							</div>
+						</div>
+						<div class="flex-grow">
+							<textarea class="w-full h-full outline-none px-2 py-1 js-text-input" style="overflow: auto; resize: none" x-text="textContent" x-on:keyup="handleChange" x-on:paste="scheduleGuiUpdate"></textarea>
+						</div>
+					</div>
+				</div>
+			</div>
+		</main>
+
+		<div class="notifications">
+			<div class="hidden notification-item is-danger is-warning is-info is-success"></div>
+		</div>
+
+		<script>require('./components/EventEmitter.js');</script>
+		<script>require('./dist/app.js');</script>
+	</body>
+</html>

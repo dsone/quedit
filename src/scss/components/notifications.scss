@@ -1,0 +1,48 @@
+/* NOTIFICATIONS */
+.notifications {
+	@apply fixed right-0 top-0 z-30 p-4 transition-shadow duration-500 pointer-events-none;
+	/* pointer-events makes sure that click events go through to underlying elements */
+
+	width: 400px;
+
+	.notification-item {
+		@apply z-30 w-full p-3 mt-4 text-base leading-snug transition-all border-l-4 rounded shadow-lg cursor-pointer opacity-80;
+		pointer-events: all;
+
+		.n-title {
+			@apply font-bold;
+		}
+
+		.n-remove {
+			@apply float-right mr-2 outline-none;
+		}
+
+		.n-text {
+			@apply px-4 overflow-y-auto;
+		}
+
+		&:first-child {
+			@apply mt-0 opacity-100;
+		}
+
+		&:hover {
+			@apply shadow-2xl opacity-100;
+		}
+
+		&.is-danger {
+			@apply bg-red-300 border-red-600;
+		}
+
+		&.is-warning {
+			@apply bg-yellow-200 border-yellow-700;
+		}
+
+		&.is-info {
+			@apply border-blue-400 bg-blue-200;
+		}
+
+		&.is-success {
+			@apply bg-green-300 border-green-900;
+		}
+	}
+}
