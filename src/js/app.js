@@ -133,8 +133,8 @@ window.App = (function() {
 						return;
 					}
 
-					this.inputFilterBy.value = '';
 					this.remapValues();
+					this.inputFilterBy.value = '';
 					this.setText(this.fullStatement);
 					this.filterColumns();
 				},
@@ -145,7 +145,7 @@ window.App = (function() {
 
 						// Split INSERT statement into pieces
 						let text = this.textInput.value;
-						let reInsert = /INSERT INTO `(.+?)` \((.+?)\) VALUES (.*)/gims;
+						let reInsert = /INSERT INTO `(.+?)`\s+\((.+?)\)\s+VALUES\s+(.*)/gims;
 
 						let matched = reInsert.exec(text);
 						if (!matched) {
