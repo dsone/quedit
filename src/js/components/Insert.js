@@ -62,7 +62,7 @@ Insert.prototype.isValid = function() {
 Insert.prototype.assemble = function() {
 	try {
 		let newFullStatement = 'INSERT INTO `' + this.tableName + '` (';
-			newFullStatement += '`' + this.columns.join('`, `') + '`) VALUES\n ';
+			newFullStatement += '`' + this.columns.join('`, `') + '`) VALUES \n';
 
 		let values = [];
 		let rows = this.values.length;  // see comment of this.values why this is used for rows
