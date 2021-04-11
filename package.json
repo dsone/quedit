@@ -1,17 +1,24 @@
 {
   "name": "sqledit",
   "version": "1.0.0",
-  "description": "",
+  "description": "Editing insert SQL statements with ease.",
   "main": "index.js",
   "scripts": {
-    "start": "electron .",
-    "dev": "concurrently --kill-others \"gulp watch\" \"npm run start\""
+    "start": "electron-forge start",
+    "dev": "concurrently --kill-others \"gulp watch\" \"npm run start\"",
+    "package": "electron-forge package",
+    "make": "electron-forge make"
   },
-  "author": "",
+  "author": "dsone",
   "license": "ISC",
   "devDependencies": {
     "@babel/core": "^7.10.4",
     "@babel/preset-env": "^7.10.4",
+    "@electron-forge/cli": "^6.0.0-beta.54",
+    "@electron-forge/maker-deb": "^6.0.0-beta.54",
+    "@electron-forge/maker-rpm": "^6.0.0-beta.54",
+    "@electron-forge/maker-squirrel": "^6.0.0-beta.54",
+    "@electron-forge/maker-zip": "^6.0.0-beta.54",
     "@fullhuman/postcss-purgecss": "^2.3.0",
     "alpinejs": "^2.4.1",
     "autoprefixer": "^9.8.5",
@@ -37,6 +44,34 @@
     "@codemirror/basic-setup": "^0.18.0",
     "@codemirror/gutter": "^0.18.0",
     "@codemirror/state": "^0.18.5",
-    "@codemirror/view": "^0.18.6"
+    "@codemirror/view": "^0.18.6",
+    "electron-squirrel-startup": "^1.0.0"
+  },
+  "config": {
+    "forge": {
+      "packagerConfig": {},
+      "makers": [
+        {
+          "name": "@electron-forge/maker-squirrel",
+          "config": {
+            "name": "sqledit"
+          }
+        },
+        {
+          "name": "@electron-forge/maker-zip",
+          "platforms": [
+            "darwin"
+          ]
+        },
+        {
+          "name": "@electron-forge/maker-deb",
+          "config": {}
+        },
+        {
+          "name": "@electron-forge/maker-rpm",
+          "config": {}
+        }
+      ]
+    }
   }
 }
