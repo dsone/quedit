@@ -6,7 +6,6 @@ import { EditorState, EditorView, basicSetup } from "@codemirror/basic-setup";
 import { StateField } from '@codemirror/state';
 
 window.notify = Notify;
-
 window.App = (function() {
 	return new function() {
 		this.start = (fileSelector, filterSelector, codeInput) => {
@@ -15,6 +14,9 @@ window.App = (function() {
 				statement: new Statement({}),
 				statementObject: undefined,
 				tableColumns: [ ],
+				filterText: false,		// bool, on selectColumn this is true, then the CM change plugin below sets the cm text to the values
+				filteredView: false,	// name of column to filter by
+				resetFilter: false,
 			};
 
 			let cm = {
@@ -25,6 +27,41 @@ window.App = (function() {
 				},
 				getCurrentLine: () => data.codeEditor.state.doc.lineAt(data.codeEditor.state.selection.main.head),
 				getCaretPosition: () => data.codeEditor.state.selection.main.head,
+				setFilterView: column => {
+					if (data.statementObject) {
+						data.filteredView = column;
+
+						data.filterText = true;  // indicate we're going to filter in listenChangesExtension
+						cm.setText(data.statementObject.getValuesByColumn(column).join('\n'));
+					}
+				},
+				resetFilterView: () => {
+					if (data.statementObject) {
+						data.resetFilter = true;
+
+						// get current filtered text
+						let rows = data.codeEditor.state.doc.toJSON();
+
+						// change existing values
+						if (data.statementObject.updateValues(data.filteredView, rows)) {
+							data.filteredView = false;
+							data.filterText = false;
+
+							// assemble new full string
+							let statement = data.statementObject.assemble();
+							if (statement !== undefined) {
+								// use new insert text for CM
+								cm.setText(statement);
+							} else {
+								cm.setText('error');
+							}
+						} else {
+							data.filteredView = false;
+							data.filterText = false;
+							cm.setText(data.statementObject.assemble());
+						}
+					}
+				}
 			};
 
 			let toChangesUpdate = undefined;
@@ -35,12 +72,27 @@ window.App = (function() {
 					if (transaction.docChanged) {
 						clearTimeout(toChangesUpdate);
 						toChangesUpdate = setTimeout(() => {
-							data.statementObject = data.statement.createObject(transaction.newDoc.toJSON().join(''));
-							if (data.statementObject) {
-								data.tableColumns = data.statementObject.getColumns();
-								this.displayedTableColumns = data.tableColumns.slice(0);
+							if (data.resetFilter) {
+								data.resetFilter = false;
+								return;
+							} else if (data.filterText) {  // filter view, do not re-analyze
+								data.filterText = false;
+								return;
+							} else if (!!data.filteredView) {  // values are displayed for a given column
+								// nothing to do here
+								return;
+							} else {  // normal view - text changed, analyze content
+								data.statementObject = data.statement.createObject(transaction.newDoc.toJSON().join(''));
+								if (data.statementObject) {
+									data.tableColumns = data.statementObject.getColumns();
 
-								console.log(this);
+									// outside of alpine this is a hacky way of accessing data
+									document.querySelector('body[x-data]').__x.$data.displayedTableColumns = data.tableColumns.slice(0);
+									document.querySelector('body[x-data]').__x.$data.contextName = data.statementObject.getTable();
+								} else {
+									document.querySelector('body[x-data]').__x.$data.displayedTableColumns = [];
+									document.querySelector('body[x-data]').__x.$data.contextName = 'SQLEdit';
+								}
 							}
 						}, 250);
 					}
@@ -78,7 +130,6 @@ window.App = (function() {
 				// cache
 				cacheSearchFilter: {},
 
-
 				openFilePicker() {
 					this.openFileInput.click();
 				},
@@ -108,6 +159,8 @@ window.App = (function() {
 					this.searchFilter.value = '';
 					this.clearButton = false;
 					this.displayedTableColumns = data.tableColumns.slice(0);
+
+					cm.resetFilterView();
 				},
 
 				filterColumns() {
@@ -145,6 +198,8 @@ window.App = (function() {
 
 					this.searchFilter.value = column;
 					this.searchTableColumnsByText = column;
+
+					cm.setFilterView(this.searchTableColumnsByText);
 					this.filterColumns();
 				},
 
