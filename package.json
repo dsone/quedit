@@ -32,5 +32,11 @@
     "postcss-nested": "^4.2.3",
     "tailwindcss": "^1.4.6",
     "tailwindcss-spinner": "^1.0.0"
+  },
+  "dependencies": {
+    "@codemirror/basic-setup": "^0.18.0",
+    "@codemirror/gutter": "^0.18.0",
+    "@codemirror/state": "^0.18.5",
+    "@codemirror/view": "^0.18.6"
   }
 }
