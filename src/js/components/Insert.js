@@ -151,6 +151,15 @@ Insert.prototype.analyze = function(insertText) {
 };
 
 /**
+ * Gets the target table name.
+ * 
+ * @returns	string	The name of the table the query has as a target.
+ */
+Insert.prototype.getTable = function() {
+	return this.tableName;
+};
+
+/**
  * Returns the available columns.
  * 
  * @returns	Array	An array of columns, empty if not yet set.
