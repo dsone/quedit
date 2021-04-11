@@ -69,7 +69,7 @@ Insert.prototype.assemble = function() {
 		for (let val = 0; val < rows; ++val) {
 			let row = [];
 			for (let col = 0; col < this.columns.length; ++col) {
-				row.push('`' + this.mapColumnsToValues[ col ][ val ] + '`');
+				row.push(/*'`' + */this.mapColumnsToValues[ col ][ val ]/* + '`'*/);
 			}
 
 			values.push('(' + row.join(', ') + ')');
@@ -120,25 +120,75 @@ Insert.prototype.analyze = function(insertText) {
 		}
 		this.columns = columns;
 
-		// Values, separate multiple inserts
-		values = values.trim().replace(/^\(/, '').replace(/(\);|\))$/gims, '').replace(/\).+?\(/gims, '#;;#').split('#;;#');
+		// Values, remove leading and closing brackets
+		values = values.trim();
+
+		let foundTuples = [],
+			openTuple = false;
+
+		let curVal = '',
+			foundValues = [],
+			openValue = false;
+		for (let i = 0; i < values.length; ++i) {
+			if ( (!openTuple && (values[i] === ',' || values[i].match(/\s/s))) || (openTuple && openValue === false && (values[i] === ',' || values[i].match(/\s/s))) ) {
+				continue;  // skip comma and whitespace between tuples
+			}
+
+			// opening bracket of new tuple
+			if (!openTuple && values[i] === '(') {
+				openTuple = true;
+				continue;
+			}
+			// closing bracket of current tuple, while no open value or open value was empty
+			if (openTuple && (openValue === false || openValue === '') && values[i] === ')') {
+				if (openValue === '') {  // int or null as a value at the end
+					foundValues.push(curVal);
+					curVal = '';
+					openValue = false;
+				}
+
+				openTuple = false;
+				foundTuples.push(foundValues.slice(0));
+				foundValues.length = 0;
+				continue;
+			}
+
+			// currently open value and the next char is a closing char the same as it was opened - but not escaped
+			// or there was no '"` as beginning then comma is the separator
+			if (openTuple && openValue !== false && ((values[i] === openValue && values[i-1] !== '\\') || (values[i] === ',' && openValue === '') )) {
+				if (openValue !== '') {
+					curVal += values[i];
+				}
+				foundValues.push(curVal.trim());
+				curVal = '';
+				openValue = false;
+				continue;
+			}
+			if (openTuple && openValue === false && (values[i] === "'" || values[i] === '"' || values[i] === '`')) {
+				openValue = values[i];
+				curVal += values[i];
+				continue;
+			}
+			if (openValue === false) {
+				openValue = '';
+			}
+
+			curVal += values[i];
+		}
 
 		this.mapColumnsToValues = {};
-		for (let i = 0; i < values.length; ++i) {
-			values[ i ] = values[ i ].split(',');
-
-			for (let j = 0; j < values[ i ].length; ++j) {
+		for (let i = 0; i < foundTuples.length; ++i) {
+			for (let j = 0; j < foundTuples[ i ].length; ++j) {
 				let colIndex = this.mapColumnToIndex[ columns[ j ] ];
 
 				if (typeof(this.mapColumnsToValues[ colIndex ]) === 'undefined') {
 					this.mapColumnsToValues[ colIndex ] = [];
 				}
 
-				values[ i ][ j ] = values[ i ][ j ].trim().replace(/^(`|'|")|(`|'|")$/g, '').trim();
-				this.mapColumnsToValues[ colIndex ].push(values[ i ][ j ]);
+				this.mapColumnsToValues[ colIndex ].push(foundTuples[ i ][ j ]);
 			}
 		}
-		this.values = values;
+		this.values = foundTuples;
 
 		this.config.isValid = true;
 		return true;
@@ -202,7 +252,7 @@ Insert.prototype.updateValue = function(column, row, value) {
 			return false;
 		}
 
-		let newValue = value.replace(/^(`|'|")|(`|'|")$/g, '').trim();
+		let newValue = value/*.replace(/^(`|'|")|(`|'|")$/g, '')*/.trim();
 		// Update the value
 		this.values[ row ][ colIndex ] = newValue;
 		// Update the map of columX => [ value1, value2 ]
@@ -237,7 +287,7 @@ Insert.prototype.updateValues = function(column, values) {
 		}
 
 		for (let i = 0; i < rows; ++i) {
-			let newValue = values[ i ].replace(/^(`|'|")|(`|'|")$/g, '').trim();
+			let newValue = values[ i ]/*.replace(/^(`|'|")|(`|'|")$/g, '')*/.trim();
 
 			// Update the value
 			this.values[ i ][ colIndex ] = newValue;
