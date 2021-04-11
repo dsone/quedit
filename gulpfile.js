@@ -53,7 +53,7 @@ gulp.task('js', function() {
 					.bundle();
 				}))
 				.pipe(buffer())
-				//.pipe(uglify())
+				.pipe(uglify())
 				.pipe(gulp.dest('www/dist/'));
 });
 
