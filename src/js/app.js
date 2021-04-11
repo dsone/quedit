@@ -59,6 +59,8 @@ window.App = (function() {
 							data.filteredView = false;
 							data.filterText = false;
 							cm.setText(data.statementObject.assemble());
+
+							notify('Update values failed', 'Reverting filtered changes', 'warning');
 						}
 					}
 				}
