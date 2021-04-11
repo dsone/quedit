@@ -1,4 +1,4 @@
-let channel = function() {
+let channel = (function() {
 	let observer = { }; // private
 	let s = { };
 
@@ -32,7 +32,7 @@ let channel = function() {
 	};
 
 	return s;
-};
+})();
 
 (function() {
 	if (typeof define === 'function' && define.amd)
