@@ -30,8 +30,7 @@ Statement.prototype.createObject = function(statement) {
 	switch (statement.substr(0, 11).toLowerCase()) {
 		case 'insert into':
 			this.object = new Insert();
-			this.object.analyze(statement);
-			if (!this.object.isValid()) {
+			if (!this.object.analyze(statement)) {
 				this.object = undefined;
 			}
 		break;
