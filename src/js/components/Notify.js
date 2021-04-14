@@ -44,8 +44,6 @@ let NotificationStatus = (function () {
 	};
 })();
 
-// for purgecss not removing the notify classes
-let ___ignore = 'is-danger is-warning is-info is-success';
 export default function Notify(title, message, type, duration) {
 	let status = NotificationStatus.getInstance();
 	if (status.last(message)) { return; }

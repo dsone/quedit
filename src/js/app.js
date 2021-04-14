@@ -17,6 +17,7 @@ window.App = (function() {
 				filterText: false,		// bool, on selectColumn this is true, then the CM change plugin below sets the cm text to the values
 				filteredView: false,	// name of column to filter by
 				resetFilter: false,
+				editorDirty: false,		// when user switches the column tables a lot and changes values - make content of editor dirty->need to set column values, editor is dirty when this value is !== false, it gets the changed column
 			};
 
 			let cm = {
@@ -61,7 +62,7 @@ window.App = (function() {
 							data.filterText = false;
 							cm.setText(data.statementObject.assemble());
 
-							notify('Update values failed', 'Reverting filtered changes', 'warning');
+							notify('Update values failed', 'Reverting last changes', 'warning');
 						}
 					}
 				}
@@ -78,12 +79,19 @@ window.App = (function() {
 							if (data.resetFilter) {
 								data.resetFilter = false;
 								return;
-							} else if (data.filterText) {  // filter view, do not re-analyze
+							} else if (data.filterText) {  // filter view, do not re-analyze, user clicks different columns
 								data.filterText = false;
-								return;
-							} else if (!!data.filteredView) {  // values are displayed for a given column
-								// nothing to do here
-								return;
+								if (data.editorDirty !== false) {
+									if (!data.statementObject.updateValues(data.editorDirty[0], data.editorDirty[1])) {
+										notify('Update values failed', 'Reverting last changes', 'warning');
+									}
+									data.editorDirty = false;
+								}
+							} else if (!!data.filteredView) {  // values are displayed for a given column and user edits values of a column
+								// User changed a value, make editorDirty by remembering what column was changed
+								// if user clicks on another column to filter by, the above data.filtertext is triggered
+								// if user resets the filter by clicking active column, the cm.resetFilterView is invoked dealing with the update of values
+								data.editorDirty = [ data.filteredView, data.codeEditor.state.doc.toJSON() ];
 							} else {  // normal view - text changed, analyze content
 								let scrollToTop = !(!!data.statementObject);  // when previously a valid doc existed - do not scroll to top
 								data.statementObject = data.statement.createObject(transaction.newDoc.toJSON().join(''));
@@ -163,12 +171,9 @@ window.App = (function() {
 
 				clearFilter() {
 					this.searchTableColumnsByText = '';
-					this.selectedColumn = '';
 					this.searchFilter.value = '';
 					this.clearButton = false;
 					this.displayedTableColumns = data.tableColumns.slice(0);
-
-					cm.resetFilterView();
 				},
 
 				filterColumns() {
@@ -201,13 +206,20 @@ window.App = (function() {
 				},
 
 				selectColumn(column) {
-					if (column === this.selectedColumn) { return; }
+					if (column === this.selectedColumn) {
+						this.selectedColumn = '';
+						cm.resetFilterView();
+						return;
+					}
 
 					this.selectedColumn = column;
-					this.searchFilter.value = column;  // fe view
-
 					cm.setFilterView(this.selectedColumn);
-					this.filterColumns();
+				},
+
+				removeValuesByColumn(column) {
+					if (confirm(`Do you really want to entirely remove the data for ${column}?`)) {
+						notify('Done', `${ column } was removed.`, 'success');
+					}
 				},
 
 				clearApp() {
