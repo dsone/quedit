@@ -1,5 +1,5 @@
 {
-  "name": "sqledit",
+  "name": "quedit",
   "version": "1.0.0",
   "description": "Editing insert SQL statements with ease.",
   "main": "index.js",
@@ -7,7 +7,8 @@
     "start": "electron-forge start",
     "dev": "concurrently --kill-others \"gulp watch\" \"npm run start\"",
     "package": "electron-forge package",
-    "make": "electron-forge make"
+    "make": "electron-forge make",
+	"build": "electron-packager . QuEdit --all"
   },
   "author": "dsone",
   "license": "ISC",
@@ -54,7 +55,7 @@
         {
           "name": "@electron-forge/maker-squirrel",
           "config": {
-            "name": "sqledit"
+            "name": "quedit"
           }
         },
         {

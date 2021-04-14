@@ -27,6 +27,7 @@ window.App = (function() {
 				},
 				getCurrentLine: () => data.codeEditor.state.doc.lineAt(data.codeEditor.state.selection.main.head),
 				getCaretPosition: () => data.codeEditor.state.selection.main.head,
+				setCaretPosition: offset => data.codeEditor.state.selection.main.head = 0,
 				setFilterView: column => {
 					if (data.statementObject) {
 						data.filteredView = column;
@@ -84,6 +85,7 @@ window.App = (function() {
 								// nothing to do here
 								return;
 							} else {  // normal view - text changed, analyze content
+								let scrollToTop = !(!!data.statementObject);  // when previously a valid doc existed - do not scroll to top
 								data.statementObject = data.statement.createObject(transaction.newDoc.toJSON().join(''));
 								if (data.statementObject) {
 									data.tableColumns = data.statementObject.getColumns();
@@ -91,9 +93,11 @@ window.App = (function() {
 									// outside of alpine this is a hacky way of accessing data
 									document.querySelector('body[x-data]').__x.$data.displayedTableColumns = data.tableColumns.slice(0);
 									document.querySelector('body[x-data]').__x.$data.contextName = data.statementObject.getTable();
+
+									scrollToTop && data.codeEditor.dispatch({ selection: { anchor: 0 }, scrollIntoView: true });
 								} else {
 									document.querySelector('body[x-data]').__x.$data.displayedTableColumns = [];
-									document.querySelector('body[x-data]').__x.$data.contextName = 'SQLEdit';
+									document.querySelector('body[x-data]').__x.$data.contextName = 'QuEdit';
 								}
 							}
 						}, 250);
@@ -117,7 +121,7 @@ window.App = (function() {
 				clearButton: false,
 
 				// x-text
-				contextName: 'SQLEdit',
+				contextName: 'QuEdit',
 				searchTableColumnsByText: '',  // Text to filter tableColumns by
 
 				displayedTableColumns: [ ],  // List of the displayed table columns, manipulated by searchTableColumnsByText
@@ -207,7 +211,7 @@ window.App = (function() {
 
 				clearApp() {
 					this.clearButton = false;
-					this.contextName = 'SQLEdit';
+					this.contextName = 'QuEdit';
 					this.searchTableColumnsByText = '';
 					this.displayedTableColumns = [];
 					this.toFilterColumns = undefined;
