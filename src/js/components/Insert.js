@@ -54,6 +54,15 @@ Insert.prototype.isValid = function() {
 };
 
 /**
+ * Returns the cached insert statement.
+ * 
+ * @returns	string		The cached insert statement.
+ */
+Insert.prototype.getInsertStatement = function() {
+	return this.insertText;
+};
+
+/**
  * Creates the new INSERT INTO statement.
  * Saves the result back into the instance.
  * 
