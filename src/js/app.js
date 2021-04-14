@@ -122,9 +122,10 @@ window.App = (function() {
 
 				// x-text
 				contextName: 'QuEdit',
-				searchTableColumnsByText: '',  // Text to filter tableColumns by
+				searchTableColumnsByText: '',	// Text to filter tableColumns by
+				selectedColumn: '',				// a selected column to display the values for
 
-				displayedTableColumns: [ ],  // List of the displayed table columns, manipulated by searchTableColumnsByText
+				displayedTableColumns: [ ],		// List of the displayed table columns, manipulated by searchTableColumnsByText
 
 				// DOM elements
 				searchFilter: document.querySelector(filterSelector),
@@ -162,6 +163,7 @@ window.App = (function() {
 
 				clearFilter() {
 					this.searchTableColumnsByText = '';
+					this.selectedColumn = '';
 					this.searchFilter.value = '';
 					this.clearButton = false;
 					this.displayedTableColumns = data.tableColumns.slice(0);
@@ -194,18 +196,17 @@ window.App = (function() {
 
 							return prevVal;
 						}, []);
-
 						this.cacheSearchFilter[this.searchTableColumnsByText] = this.displayedTableColumns.slice(0);
 					}, 200);
 				},
 
 				selectColumn(column) {
-					if (column === this.searchFilter.value) { return; }
+					if (column === this.selectedColumn) { return; }
 
-					this.searchFilter.value = column;
-					this.searchTableColumnsByText = column;
+					this.selectedColumn = column;
+					this.searchFilter.value = column;  // fe view
 
-					cm.setFilterView(this.searchTableColumnsByText);
+					cm.setFilterView(this.selectedColumn);
 					this.filterColumns();
 				},
 
@@ -213,6 +214,7 @@ window.App = (function() {
 					this.clearButton = false;
 					this.contextName = 'QuEdit';
 					this.searchTableColumnsByText = '';
+					this.selectedColumn = '';
 					this.displayedTableColumns = [];
 					this.toFilterColumns = undefined;
 					this.cacheSearchFilter = {};
