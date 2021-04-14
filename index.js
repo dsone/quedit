@@ -8,7 +8,8 @@ function createWindow() {
 		maxWidth: 1500,
 		webPreferences: {
 			nodeIntegration: true
-		}
+		},
+		icon: __dirname + '/www/favicon.ico'
 	});
 	
 	// und lade die index.html der App.
