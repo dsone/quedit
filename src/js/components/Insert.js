@@ -219,12 +219,12 @@ Insert.prototype.getTable = function() {
 };
 
 /**
- * Returns the available columns.
+ * Returns the available columns, sorted ascending.
  * 
- * @returns	Array	An array of columns, empty if not yet set.
+ * @returns	Array	A sorted Array of columns, empty if not yet set.
  */
 Insert.prototype.getColumns = function() {
-	return this.columns.slice(0);
+	return this.columns.slice(0).sort();
 };
 
 /**
