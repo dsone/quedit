@@ -5,8 +5,8 @@
  * Implemented with a Singleton pattern since Notify is not instantiated.
  */
 let NotificationStatus = (function () {
-	var instance;
- 
+	let instance;
+
 	function createInstance() {
 		let NotificationStatus = function() {
 			this.lastNotify = '';
@@ -44,66 +44,120 @@ let NotificationStatus = (function () {
 	};
 })();
 
-export default function Notify(title, message, type, duration) {
+function Notify(title = 'title', text = 'text', cfg = {}) {
 	let status = NotificationStatus.getInstance();
-	if (status.last(message)) { return; }
+	if (status.last(text)) { return; }
 
-	duration = Math.max(900, duration || 3000);  // <900 might be problematic due to the animations
+	let config = {
+		...{
+			// Title of the notification
+			title: title,
+			// Message content
+			text: text,
+			// Type of notifcation, info, warning, danger, success
+			type: 'info',
+			// the container holding all notification items
+			notificationsContainer: document.querySelector('.notifications'),
+			// Auto removing notification after this, in ms
+			autoRemoveDuration: 3000,
+			// fadein/-out animation time
+			animationDuration: 800,
+			// the template for notifications to use
+			templateHTML: document.querySelector('#notification-item').innerHTML,
+			// class for opening animation
+			openingAnimationClass: 'fadeInDown',
+			// class for closing animation
+			closingAnimationClass: 'fadeOutRight',
+			// close btn hover:color for info and warning
+			warningInfoCloseColor: 'text-gray-500',
+			// close bnt hover:color for danger and success
+			dangerSuccessCloseColor: 'text-gray-200',
+		},
+		...cfg
+	};
+	
 	let timerClose = undefined;
-	// notification container, holding all elements
-	let tile = document.createElement('div');
-		tile.classList.add('notification', 'notification-item', 'is-' + type, 'animated', 'fast', 'fadeInDown', 'group');
-		tile.addEventListener('click', function(e) {
-			if (timerClose !== undefined) {
-				timerClose = clearTimeout(timerClose);
-			}
-			if (timerFadeIn !== undefined) {
-				timerFadeIn = clearTimeout(timerFadeIn);
-			}
+	let timerFadeIn = undefined;
 
-			tile.classList.add('fadeOutRight');
-			setTimeout(function() {
-				tile.remove();
-			}, 900);
+	let _div = document.createElement('div');
+	let tmpl = config.templateHTML.slice(0);
+
+	_div.innerHTML = tmpl;
+	_div = _div.firstElementChild;
+	_div.classList.add('is-' + config.type, config.openingAnimationClass);
+	
+	_div.addEventListener('click', e => {
+		if (timerClose !== undefined) {
+			timerClose = clearTimeout(timerClose);
+		}
+		if (timerFadeIn !== undefined) {
+			timerFadeIn = clearTimeout(timerFadeIn);
+		}
+		
+		_div.classList.add(config.closingAnimationClass);
+		setTimeout(function() {
+			_div.remove();
+		}, config.animationDuration+50);
+	});
+
+	_div.addEventListener('mouseover', function(e) {
+		if (timerClose !== undefined) {
+			timerClose = clearTimeout(timerClose);
+		}
+	});
+	_div.addEventListener('mouseleave', function(e) {
+		timerClose = setTimeout(function() {
+			_div.click();
+		}, config.autoRemoveDuration);
+	});
+
+	let closeBtn = [ ..._div.querySelectorAll('[n-close]') ];
+		closeBtn.forEach(btn => {
+			btn.innerHTML = 'x';
+
+			btn.classList.add((config.type === 'warning' || config.type === 'info' ? `group-hover:${ config.warningInfoCloseColor }` : `group-hover:${ config.dangerSuccessCloseColor }`));
+
+			btn.addEventListener('click', e => {
+				_div.click();
+			});
 		});
-		tile.addEventListener('mouseover', function(e) {
-			if (timerClose !== undefined) {
-				timerClose = clearTimeout(timerClose);
-			}
-		});
-		tile.addEventListener('mouseleave', function(e) {
-			timerClose = setTimeout(function() {
-				tile.click();
-			}, duration);
-		});
 
-   // The button to prematurely close the notification;
-	let btn = document.createElement('button');
-		btn.classList.add('n-remove', (type === 'warning' || type === 'info' ? 'group-hover:text-gray-500' : 'group-hover:text-gray-200'));
-		btn.innerHTML = 'x';
-		btn.addEventListener('click', function(e) {
-			tile.click();
-		});
-	tile.appendChild(btn);
+	[ 'title', 'text' ].forEach(key => {
+		let el = _div.querySelector(`[n-${ key }]`);
+		el && (el.innerHTML = config[key]);
+	});
 
-	// Title for the notification
-	let header = document.createElement('h3');
-		header.classList.add('n-title');
-		header.innerText = title;
-	tile.appendChild(header);
+	let icon = _div.querySelector(`[n-type-${ config.type }]`);
+	icon && icon.classList.remove('hidden');
 
-	// Text node, aka message
-	let text = document.createElement('div');
-		text.classList.add('n-text');
-		text.innerHTML = message;
-	tile.appendChild(text);
+	!!config.notificationsContainer && config.notificationsContainer.prepend(_div);
 
-	// Add it to global notification container
-	document.querySelector('.notifications').prepend(tile);
-	let timerFadeIn = setTimeout(function() {
-		tile.classList.remove('fadeInDown');
-	}, 900);  // animation runs for 800ms (due to .fast), but rendering might need a ms more to prevent "jumping" of element
+	timerFadeIn = setTimeout(function() {
+		_div.classList.remove(config.openingAnimationClass);
+	}, config.animationDuration+50);
 
-	// start timer to close automatically after 5s by triggering mouseleave event
-	tile.dispatchEvent(new Event('mouseleave'));
+	// start timer to close automatically after 5s
+	_div.dispatchEvent(new Event('mouseleave'));
 }
+
+
+// Creating shorthands in a hacky way
+let wrappedNotify = (() => {
+	Notify.danger = function(title = 'title', text = 'text', cfg = {}) {
+		console.log(arguments);
+		return Notify(title, text, { type: 'danger', ...cfg });
+	};
+	Notify.info = function(title = 'title', text = 'text', cfg = {}) {
+		return Notify(title, text, { type: 'info', ...cfg });
+	};
+	Notify.success = function(title = 'title', text = 'text', cfg = {}) {
+		return Notify(title, text, { type: 'success', ...cfg });
+	};
+	Notify.warning = function(title = 'title', text = 'text', cfg = {}) {
+		return Notify(title, text, { type: 'warning', ...cfg });
+	};
+
+	return Notify;
+})();
+
+export default wrappedNotify;

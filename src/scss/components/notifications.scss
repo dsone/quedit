@@ -1,12 +1,14 @@
 /* NOTIFICATIONS */
 .notifications {
-	@apply fixed right-0 top-0 z-30 p-4 transition-shadow duration-500 pointer-events-none;
+	@apply fixed right-0 py-6 px-1 transition-shadow duration-500 pointer-events-none;
 	/* pointer-events makes sure that click events go through to underlying elements */
+	z-index: 51; /* make sure notifications are above modals, while modals are over anything else */
 
+	top: 20px;
 	width: 400px;
 
 	.notification-item {
-		@apply z-30 w-full p-3 mt-4 text-base leading-snug transition-all border-l-4 rounded shadow-lg cursor-pointer opacity-80;
+		@apply w-full p-3 mt-4 text-base leading-snug transition-all border-l-4 rounded shadow-lg cursor-pointer opacity-80;
 		pointer-events: all;
 
 		.n-title {
@@ -18,7 +20,11 @@
 		}
 
 		.n-text {
-			@apply px-4 overflow-y-auto;
+			@apply pt-1 overflow-y-auto text-sm;
+		}
+
+		.n-icon {
+			@apply w-1/6 h-6 -ml-3;
 		}
 
 		&:first-child {
@@ -26,23 +32,39 @@
 		}
 
 		&:hover {
-			@apply shadow-2xl opacity-100;
+			@apply shadow-md opacity-100;
 		}
 
 		&.is-danger {
-			@apply bg-red-300 border-red-600;
+			@apply bg-red-200 border-red-600;
+
+			.n-icon {
+				@apply text-red-600;
+			}
 		}
 
 		&.is-warning {
 			@apply bg-yellow-200 border-yellow-700;
+
+			.n-icon {
+				@apply text-yellow-700;
+			}
 		}
 
 		&.is-info {
 			@apply border-blue-400 bg-blue-200;
+
+			.n-icon {
+				@apply text-black;
+			}
 		}
 
 		&.is-success {
 			@apply bg-green-300 border-green-900;
+
+			.n-icon {
+				@apply text-green-900;
+			}
 		}
 	}
 }
