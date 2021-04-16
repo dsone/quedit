@@ -26,7 +26,7 @@ export default function Insert() {
 	 * A link from column to value.
 	 * Index based, meaning, "columnAtIndexY" inside columns maps to values a, b, ..., z.
 	 */
-	this.mapColumnsToValues = {};
+	this.mapColumnsToValues = [];
 }
 
 /**
@@ -38,7 +38,7 @@ Insert.prototype.reset = function() {
 	this.columns = [];
 	this.mapColumnToIndex = {};
 	this.values = [];
-	this.mapColumnsToValues = {};
+	this.mapColumnsToValues = [];
 	this.config = {
 		isValid: false,
 	};
@@ -87,7 +87,7 @@ Insert.prototype.assemble = function() {
 
 		this.insertText = newFullStatement;
 
-		return newFullStatement;
+		return newFullStatement.slice(0);
 	} catch (e) {
 		console.error(e);
 
@@ -185,7 +185,7 @@ Insert.prototype.analyze = function(insertText) {
 			curVal += values[i];
 		}
 
-		this.mapColumnsToValues = {};
+		this.mapColumnsToValues = [];
 		for (let i = 0; i < foundTuples.length; ++i) {
 			for (let j = 0; j < foundTuples[ i ].length; ++j) {
 				let colIndex = this.mapColumnToIndex[ columns[ j ] ];
@@ -246,6 +246,55 @@ Insert.prototype.getValuesByColumn = function(column) {
 
 	return values;
 };
+
+/**
+ * Removes an entire column, including their values.
+ * 
+ * @param	string	column	Name of the column to remove.
+ * @returns mixed			Boolean false on error, Array with the new columns on success.
+ */
+Insert.prototype.removeColumn = function(column) {
+	try {
+		let colIndex = this.mapColumnToIndex[ column ];
+
+		if (colIndex === undefined || this.mapColumnsToValues[ colIndex ] === undefined) {
+			return false;
+		}
+
+		let newColumns = this.columns.slice(0);
+			newColumns.splice(colIndex, 1);
+		let newMapColumnToIndex = Object.assign({}, this.mapColumnToIndex);
+
+		// Update index for columnName -> index-in-values
+		for (let i = 0; i < newColumns.length; ++i) {
+			if (newMapColumnToIndex[ newColumns[i] ] < colIndex) {
+				continue;
+			}
+
+			newMapColumnToIndex[ newColumns[i] ] = newMapColumnToIndex[ newColumns[i] ] - 1;
+		}
+
+		let newValues = this.values.slice(0);
+		// remove the column from each row
+		for (let row = 0; row < newValues.length; ++row) {
+			newValues[ row ].splice(colIndex, 1);
+		}
+
+		delete this.mapColumnToIndex[ column ];
+		this.mapColumnsToValues.splice(colIndex, 1);
+
+		this.values = newValues;
+		this.columns = newColumns;
+		this.mapColumnToIndex = newMapColumnToIndex;
+
+		return this.columns.slice(0).sort();
+	} catch (e) {
+		console.error(e);
+
+		return false;
+	}
+};
+
 
 /**
  * 
