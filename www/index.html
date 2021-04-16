@@ -4,13 +4,10 @@
 		<meta charset="UTF-8">
 		<title>QuEdit</title>
 		<link href="dist/app.css" rel="stylesheet" />
-		<style>
-			.cm-editor { height: 100%; }
-		</style>
 	</head>
-	<body class="w-full h-full p-0 m-0 overflow-x-hidden overflow-y-scroll font-sans text-base bg-blue-100 xl:text-lg" x-data="App.start('.js-file', '.js-filterby', '.js-text-input')">
+	<body class="w-full h-full p-0 m-0 overflow-hidden font-sans text-base bg-blue-100 xl:text-lg" x-data="App.start('.js-file', '.js-filterby', '.js-text-input')">
 		<main class="absolute top-0 bottom-0 left-0 right-0 p-0 m-0">
-			<nav class="fixed top-0 left-0 right-0 flex flex-wrap items-center h-10 text-white bg-blue-900 border-b-2 border-white">
+			<nav class="fixed top-0 left-0 right-0 flex flex-wrap items-center h-10 text-white bg-blue-900 shadow-sm">
 				<span class="inline-block">
 					<!-- File Picker -->
 					<input type="file" class="hidden js-file" accept=".sql,.dump,.txt" @change="loadFile" @blur="loadFile">
@@ -25,36 +22,45 @@
 			<div class="flex items-center justify-center h-full pt-10">
 				<div class="w-full h-full">
 					<div class="flex h-full bg-white">
-						<div class="w-1/3 p-2 bg-blue-100 border-r border-blue-200 xl:w-1/4" style="flex: 0 1 auto; overflow-y: auto; overflow-x: hidden;">
-							<div class="text-black">
-								<div class="italic font-semibold text-center text-md">
-									<span x-text="contextName"></span>
+						<div class="flex-initial w-1/2 bg-gray-200 border-r border-blue-200 md:w-1/3 xl:w-1/4">
+							<div class="flex flex-col h-full">
+								<div class="bg-blue-100 shadow-md">
+									<div class="p-2 text-black">
+										<div class="italic font-semibold text-center text-md">
+											<span class="break-all" x-text="contextName"></span>
+										</div>
+									</div>
+									<div class="relative p-2 mt-2">
+										<input type="text" class="w-full px-2 py-1 text-sm border border-blue-200 outline-none js-filterby" placeholder="Search..." x-on:keyup="filterColumns">
+										<span class="absolute h-4 transition-colors duration-200 cursor-pointer clear-button hover:text-red-700" @click="clearFilter" x-show="clearButton">
+											<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" stroke="currentColor">
+												<title>Clear</title>
+												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+											</svg>
+										</span>
+									</div>
+								</div>
+								<div class="pt-2 overflow-auto border-t border-blue-200">
+									<div class="text-sm leading-4">
+										<template x-for="(column, index) in displayedTableColumns" :key="index">
+											<div class="relative cursor-pointer group" :class="{ 'font-bold hover:bg-red-300 bg-blue-200': selectedColumn === column, 'hover:bg-blue-200': selectedColumn !== column }" @click="selectColumn(column)">
+												<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 group-hover:hidden svg-col-left" :class="{ 'opacity-0': selectedColumn !== column }" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+												<svg xmlns="http://www.w3.org/2000/svg" class="hidden w-4 h-4 group-hover:inline-block svg-col-left" :class="{ 'opacity-0': selectedColumn !== column }" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+
+												<a href="#" class="block px-6 py-1 break-all" x-text="column"></a>
+
+												<svg xmlns="http://www.w3.org/2000/svg" class="hidden w-4 h-4 transition-colors duration-200 group-hover:inline-block hover:text-red-700 svg-col-right" :class="{ 'invisible': selectedColumn !== '' }" fill="none" viewBox="0 0 24 24" stroke="currentColor" @click.stop="removeValuesByColumn(column)">
+													<title>Remove Column</title>
+													<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+												</svg>
+											</div>
+										</template>
+									</div>
 								</div>
 							</div>
-							<div class="relative mt-2">
-								<input type="text" class="w-full px-2 py-1 text-sm border border-blue-200 outline-none js-filterby" placeholder="Search..." x-on:keyup="filterColumns">
-								<span class="absolute top-0 h-4 cursor-pointer" style="right: 10px" @click="clearFilter" x-show="clearButton">x</span>
-							</div>
-							<div class="pt-2 mt-3 border-t border-blue-200">
-								<ul class="text-sm">
-									<template x-for="(column, index) in displayedTableColumns" :key="index">
-										<li class="relative leading-4 cursor-pointer group" :class="{ 'font-bold hover:bg-red-200': selectedColumn === column, 'hover:bg-blue-200': selectedColumn !== column }" @click="selectColumn(column)">
-											<svg xmlns="http://www.w3.org/2000/svg" class="inline-block w-4 h-4 group-hover:hidden" :class="{ 'opacity-0': selectedColumn !== column }" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
-
-											<svg xmlns="http://www.w3.org/2000/svg" class="hidden w-4 h-4 group-hover:inline-block" :class="{ 'opacity-0': selectedColumn !== column }" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
-											<a href="#" class="inline-block pl-1" x-text="column"></a>
-
-											<svg xmlns="http://www.w3.org/2000/svg" class="absolute right-0 hidden w-5 h-5 pr-2 group-hover:inline-block hover:text-red-900" :class="{ 'invisible': selectedColumn !== '' }" fill="none" viewBox="0 0 24 24" stroke="currentColor" @click.stop="removeValuesByColumn(column)">
-												<title>Remove Column</title>
-												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-											</svg>
-										</li>
-									</template>
-								</ul>
-							</div>
 						</div>
-						<div class="relative flex-grow">
-							<div class="w-full h-full overflow-auto outline-none resize-none" style="max-width: 1102px">
+						<div class="relative w-1/2 md:w-2/3 xl:w-3/4">
+							<div class="w-full h-full overflow-auto outline-none resize-none code-container">
 								<div class="h-full js-text-input"></div>
 							</div>
 						</div>
@@ -65,7 +71,7 @@
 
 		<div class="notifications">
 			<div class="hidden notification notification-item animated fast fadeInDown fadeOutRight group is-danger is-warning is-info is-success n-remove group-hover:text-gray-500 group-hover:text-gray-200 n-title n-text"></div>
-			<button class="hidden"></button>
+			<button class="hidden cm-editor"></button>
 		</div>
 
 		<template id="notification-item">

@@ -1,3 +1,25 @@
 button.outline-none:focus {
 	outline: none !important;
 }
+
+.cm-editor { height: 100%; }
+
+.clear-button {
+	right: 12px;
+	top: 15px;
+}
+
+
+.svg-col-left {
+	@apply absolute left-0;
+
+	top: 4px;
+	left: 2px;
+}
+
+.svg-col-right {
+	@apply absolute right-0;
+
+	top: 4px;
+	right: 2px;
+}
