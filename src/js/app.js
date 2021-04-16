@@ -28,7 +28,6 @@ window.App = (function() {
 				},
 				getCurrentLine: () => data.codeEditor.state.doc.lineAt(data.codeEditor.state.selection.main.head),
 				getCaretPosition: () => data.codeEditor.state.selection.main.head,
-				setCaretPosition: offset => data.codeEditor.state.selection.main.head = 0,
 				setFilterView: column => {
 					if (data.statementObject) {
 						data.filteredView = column;
@@ -64,6 +63,8 @@ window.App = (function() {
 
 							notify('Update values failed', 'Reverting last changes', 'warning');
 						}
+
+						data.editorDirty = false;
 					}
 				}
 			};
@@ -216,9 +217,38 @@ window.App = (function() {
 					cm.setFilterView(this.selectedColumn);
 				},
 
+				/**
+				 * Trashicon on a column was selected.
+				 * Only available if data.statementObject is a valid instance.
+				 * 
+				 * @param	string	column		The column to remove.
+				 */
 				removeValuesByColumn(column) {
-					if (confirm(`Do you really want to entirely remove the data for ${column}?`)) {
-						notify('Done', `${ column } was removed.`, 'success');
+					if (data.tableColumns.length === 1) {
+						notify('Warning', `At least 1 column must be present, or your statement becomes invalid!`, 'warning');
+						return;
+					}
+					if (confirm(`Entirely remove column '${column}' including it's values?`)) {
+						let newColumns;
+
+						if (newColumns = data.statementObject.removeColumn(column)) {
+							data.tableColumns = newColumns;
+							this.displayedTableColumns = data.tableColumns.slice(0);
+
+							this.cacheSearchFilter = {};  // reset or deleted column might be displayed
+							notify('Done', `${ column } was removed.`, 'success');
+						} else {
+							notify('Error', `${ column } could not be removed, reverting.`, 'danger');
+						}
+
+						// if the same column was selected, clear the selection
+						if (column === this.selectedColumn) {
+							this.selectedColumn = '';
+							cm.resetFilterView();
+						} else {
+							data.resetFilter = true;
+							cm.setText(data.statementObject.assemble());
+						}
 					}
 				},
 
@@ -230,6 +260,13 @@ window.App = (function() {
 					this.displayedTableColumns = [];
 					this.toFilterColumns = undefined;
 					this.cacheSearchFilter = {};
+
+					data.statementObject = undefined;
+					data.tableColumns = [ ];
+					data.filterText = false;
+					data.filteredView = false;
+					data.resetFilter = false;
+					data.editorDirty = false;
 
 					cm.setText('');
 				}
