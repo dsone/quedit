@@ -26,7 +26,7 @@
     "babelify": "^10.0.0",
     "browserify": "^16.5.1",
     "concurrently": "^5.2.0",
-    "electron": "^9.1.0",
+    "electron": "^12.0.0",
     "electron-reload": "^1.5.0",
     "gulp": "^4.0.2",
     "gulp-buffer": "0.0.2",
