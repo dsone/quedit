@@ -144,7 +144,6 @@ function Notify(title = 'title', text = 'text', cfg = {}) {
 // Creating shorthands in a hacky way
 let wrappedNotify = (() => {
 	Notify.danger = function(title = 'title', text = 'text', cfg = {}) {
-		console.log(arguments);
 		return Notify(title, text, { type: 'danger', ...cfg });
 	};
 	Notify.info = function(title = 'title', text = 'text', cfg = {}) {
