@@ -28,6 +28,7 @@ window.App = (function() {
 				},
 				getCurrentLine: () => data.codeEditor.state.doc.lineAt(data.codeEditor.state.selection.main.head),
 				getCaretPosition: () => data.codeEditor.state.selection.main.head,
+				setCaretPosition: offset => data.codeEditor.dispatch({ selection: { anchor: offset }, scrollIntoView: true }),
 				setFilterView: column => {
 					if (data.statementObject) {
 						data.filteredView = column;

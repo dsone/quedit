@@ -187,6 +187,10 @@ Insert.prototype.analyze = function(insertText) {
 
 		this.mapColumnsToValues = [];
 		for (let i = 0; i < foundTuples.length; ++i) {
+			if (foundTuples[i].length !== columns.length) {
+				throw(`Found ${ foundTuples[i].length } values in row ${ i }, ${ columns.length } values expected, abort!`);
+			}
+
 			for (let j = 0; j < foundTuples[ i ].length; ++j) {
 				let colIndex = this.mapColumnToIndex[ columns[ j ] ];
 
