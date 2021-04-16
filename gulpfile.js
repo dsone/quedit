@@ -8,33 +8,43 @@ const buffer = require('gulp-buffer');
 const uglify = require('gulp-uglify');
 const browserify = require('browserify');
 
+const gulpif = require('gulp-if');
+const minimist = require('minimist');
+
 const purgeCss = require('@fullhuman/postcss-purgecss')({
 	// Specify the paths to all of the template files in your project 
 	content: [
-	  './www/**/*.html',
-	  './www/dist/js/*.js',
+		'./www/**/*.html',
+		'./www/dist/js/*.js',
 	],
 	// Include any special characters you're using in this regular expression
 	defaultExtractor: content => content.match(/[A-Za-z0-9-_:/]+/g) || []
 });
 
+/** CLI Parameter support */
+let knownOptions = {
+	string: 'env',
+	default: { env: process.env.NODE_ENV || 'production' }
+};
+let options = minimist(process.argv.slice(2), knownOptions);
+
 gulp.task('sass', function () {
 	const postcss = require('gulp-postcss')
 	
 	return gulp.src('src/scss/app.scss')
-			   .pipe(rename({ extname: ".css" }))
-			   .pipe(postcss([
+				.pipe(rename({ extname: ".css" }))
+				.pipe(postcss([
 					require('postcss-import'),
 					require('tailwindcss'),
 					require('postcss-nested'),
 					require('postcss-custom-properties'),
 					require('autoprefixer'),
-					purgeCss
+					...options.env === 'production' ? [ purgeCss ] : []
 				]))
-				.pipe(uglifycss({
+				.pipe(gulpif(options.env === 'production', uglifycss({
 					"maxLineLen": 80,
 					"uglyComments": true
-				}))
+				})))
 				.pipe(gulp.dest('www/dist/'));
 });
 
@@ -53,15 +63,15 @@ gulp.task('js', function() {
 					.bundle();
 				}))
 				.pipe(buffer())
-				.pipe(uglify())
+				.pipe(gulpif(options.env === 'production', uglify()))
 				.pipe(gulp.dest('www/dist/'));
 });
 
 gulp.task('js:watch', function () {
-    return gulp.watch('src/js/**/*.js',  { interval: 1000, usePolling: true }, gulp.series('js'));
+	return gulp.watch('src/js/**/*.js',  { interval: 1000, usePolling: true }, gulp.series('js'));
 });
 
 gulp.task('watch', function () {
-    gulp.watch([ './src/scss/**/*.scss', './www/**/*.html' ],  { interval: 1000, usePolling: true }, gulp.series('sass'));
+	gulp.watch([ './src/scss/**/*.scss', './www/**/*.html' ],  { interval: 1000, usePolling: true }, gulp.series('sass'));
 	gulp.watch('./src/js/**/*.js',  { interval: 1000, usePolling: true }, gulp.series('js'));
 });

@@ -8,7 +8,7 @@
     "dev": "concurrently --kill-others \"gulp watch\" \"npm run start\"",
     "package": "electron-forge package",
     "make": "electron-forge make",
-	"build": "electron-packager . QuEdit --all"
+    "build": "electron-packager . QuEdit --all"
   },
   "author": "dsone",
   "license": "ISC",
@@ -30,11 +30,13 @@
     "electron-reload": "^1.5.0",
     "gulp": "^4.0.2",
     "gulp-buffer": "0.0.2",
+    "gulp-if": "^3.0.0",
     "gulp-postcss": "^8.0.0",
     "gulp-rename": "^2.0.0",
     "gulp-tap": "^2.0.0",
     "gulp-uglify": "^3.0.2",
     "gulp-uglifycss": "^1.1.0",
+    "minimist": "^1.2.5",
     "postcss-custom-properties": "^9.1.1",
     "postcss-import": "^12.0.1",
     "postcss-nested": "^4.2.3",
