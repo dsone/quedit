@@ -11,7 +11,7 @@ window.App = (function() {
 		this.start = (fileSelector, filterSelector, codeInput) => {
 			let data = {
 				codeEditor: undefined,
-				statement: new Statement({}),
+				statement: new Statement({ notification: Notify }),
 				statementObject: undefined,
 				tableColumns: [ ],
 				filterText: false,		// bool, on selectColumn this is true, then the CM change plugin below sets the cm text to the values
@@ -62,7 +62,7 @@ window.App = (function() {
 							data.filterText = false;
 							cm.setText(data.statementObject.assemble());
 
-							notify('Update values failed', 'Reverting last changes', 'warning');
+							notify.warning('Update values failed', 'Reverting last changes');
 						}
 
 						data.editorDirty = false;
@@ -85,7 +85,7 @@ window.App = (function() {
 								data.filterText = false;
 								if (data.editorDirty !== false) {
 									if (!data.statementObject.updateValues(data.editorDirty[0], data.editorDirty[1])) {
-										notify('Update values failed', 'Reverting last changes', 'warning');
+										notify.warning('Update values failed', 'Reverting last changes');
 									}
 									data.editorDirty = false;
 								}
@@ -164,7 +164,7 @@ window.App = (function() {
 					};
 
 					if (this.openFileInput.files[0].size > 262_144_000) {
-						notify('File too large', 'You can only open files up too 250 MiB size.', 'danger');
+						notify.danger('File too large', 'You can only open files up too 250 MiB size.');
 						return;
 					}
 
@@ -226,7 +226,7 @@ window.App = (function() {
 				 */
 				removeValuesByColumn(column) {
 					if (data.tableColumns.length === 1) {
-						notify('Warning', `At least 1 column must be present, or your statement becomes invalid!`, 'warning');
+						notify.warning('Warning', `At least 1 column must be present, or your statement becomes invalid!`);
 						return;
 					}
 					if (confirm(`Entirely remove column '${column}' including it's values?`)) {
@@ -237,9 +237,9 @@ window.App = (function() {
 							this.displayedTableColumns = data.tableColumns.slice(0);
 
 							this.cacheSearchFilter = {};  // reset or deleted column might be displayed
-							notify('Done', `${ column } was removed.`, 'success');
+							notify.success('Deleted', `'${ column }' was removed.`);
 						} else {
-							notify('Error', `${ column } could not be removed, reverting.`, 'danger');
+							notify.danger('Error', `${ column } could not be removed, reverting.`);
 						}
 
 						data.resetFilter = true;  // trick codeEditor in not doing double the work

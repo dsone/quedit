@@ -1,8 +1,12 @@
-export default function Insert() {
+export default function Insert(config) {
 	this.insertText = '';
 
 	this.config = {
-		isValid: false,
+		...{
+			isValid: false,
+			parent: undefined,
+		},
+		...config
 	};
 
 	/**
@@ -41,6 +45,7 @@ Insert.prototype.reset = function() {
 	this.mapColumnsToValues = [];
 	this.config = {
 		isValid: false,
+		parent: this.config.parent,
 	};
 };
 
@@ -89,6 +94,7 @@ Insert.prototype.assemble = function() {
 
 		return newFullStatement.slice(0);
 	} catch (e) {
+		this.config.parent.notify('danger', e);
 		console.error(e);
 
 		return undefined;
@@ -206,6 +212,7 @@ Insert.prototype.analyze = function(insertText) {
 		this.config.isValid = true;
 		return true;
 	} catch (e) {
+		this.config.parent.notify('danger', e);
 		console.error(e);
 		this.reset();
 
@@ -293,6 +300,7 @@ Insert.prototype.removeColumn = function(column) {
 
 		return this.columns.slice(0).sort();
 	} catch (e) {
+		this.config.parent.notify('danger', e);
 		console.error(e);
 
 		return false;
@@ -322,6 +330,7 @@ Insert.prototype.updateValue = function(column, row, value) {
 
 		return true;
 	} catch (e) {
+		this.config.parent.notify('danger', e);
 		console.error(e);
 
 		return false;
@@ -359,6 +368,7 @@ Insert.prototype.updateValues = function(column, values) {
 
 		return true;
 	} catch (e) {
+		this.config.parent.notify('danger', e);
 		console.error(e);
 
 		return false;
