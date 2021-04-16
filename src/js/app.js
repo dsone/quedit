@@ -241,14 +241,8 @@ window.App = (function() {
 							notify('Error', `${ column } could not be removed, reverting.`, 'danger');
 						}
 
-						// if the same column was selected, clear the selection
-						if (column === this.selectedColumn) {
-							this.selectedColumn = '';
-							cm.resetFilterView();
-						} else {
-							data.resetFilter = true;
-							cm.setText(data.statementObject.assemble());
-						}
+						data.resetFilter = true;  // trick codeEditor in not doing double the work
+						cm.setText(data.statementObject.assemble());
 					}
 				},
 
