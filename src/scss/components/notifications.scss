@@ -4,7 +4,8 @@
 	/* pointer-events makes sure that click events go through to underlying elements */
 	z-index: 51; /* make sure notifications are above modals, while modals are over anything else */
 
-	top: 20px;
+	top: 10px;
+	right: 6px;
 	width: 400px;
 
 	.notification-item {

@@ -42,7 +42,7 @@
 								</div>
 								<div class="pt-2 overflow-auto border-t border-blue-200">
 									<div class="text-sm leading-4">
-										<template x-for="(column, index) in displayedTableColumns" :key="index">
+										<template x-for="(column, index) in displayedTableColumns" :key="index" hidden>
 											<div class="relative cursor-pointer group" :class="{ 'font-bold hover:bg-red-300 bg-blue-200': selectedColumn === column, 'hover:bg-blue-200': selectedColumn !== column }" @click="selectColumn(column)">
 												<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 group-hover:hidden svg-col-left" :class="{ 'opacity-0': selectedColumn !== column }" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
 												<svg xmlns="http://www.w3.org/2000/svg" class="hidden w-4 h-4 group-hover:inline-block svg-col-left" :class="{ 'opacity-0': selectedColumn !== column }" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
@@ -74,7 +74,7 @@
 			<button class="hidden cm-editor cm-tooltip"></button>
 		</div>
 
-		<template id="notification-item">
+		<template id="notification-item" hidden>
 			<div class="notification notification-item animated fast group">
 				<button class="n-remove" n-close></button>
 				<div class="flex flex-row items-center">

@@ -18,7 +18,7 @@ const purgeCss = require('@fullhuman/postcss-purgecss')({
 		'./www/dist/js/*.js',
 	],
 	// Include any special characters you're using in this regular expression
-	defaultExtractor: content => content.match(/[A-Za-z0-9-_:/]+/g) || []
+	defaultExtractor: content => content.match(/[A-Za-z0-9-_:\[\]\#/]+/g) || []
 });
 
 /** CLI Parameter support */
@@ -32,15 +32,14 @@ gulp.task('sass', function () {
 	const postcss = require('gulp-postcss')
 	
 	return gulp.src('src/scss/app.scss')
-				.pipe(rename({ extname: ".css" }))
 				.pipe(postcss([
 					require('postcss-import'),
 					require('tailwindcss'),
 					require('postcss-nested'),
 					require('postcss-custom-properties'),
-					require('autoprefixer'),
 					...options.env === 'production' ? [ purgeCss ] : []
 				]))
+				.pipe(rename({ extname: '.css' }))
 				.pipe(gulpif(options.env === 'production', uglifycss({
 					"maxLineLen": 80,
 					"uglyComments": true
