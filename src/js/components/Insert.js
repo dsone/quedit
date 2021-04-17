@@ -145,7 +145,7 @@ Insert.prototype.analyze = function(insertText) {
 			foundValues = [],
 			openValue = false;
 		for (let i = 0; i < values.length; ++i) {
-			if ( (!openTuple && (values[i] === ',' || values[i].match(/\s/s))) || (openTuple && openValue === false && (values[i] === ',' || values[i].match(/\s/s))) ) {
+			if ( (!openTuple && !openValue && values[i] == ';') || (!openTuple && (values[i] === ',' || values[i].match(/\s/s))) || (openTuple && openValue === false && (values[i] === ',' || values[i].match(/\s/s))) ) {
 				continue;  // skip comma and whitespace between tuples
 			}
 
@@ -371,6 +371,84 @@ Insert.prototype.updateValues = function(column, values) {
 		this.config.parent.notify('danger', e);
 		console.error(e);
 
+		return false;
+	}
+};
+
+/**
+ * Determines the column name within a values position.
+ * 
+ * @param	int		position		The position within the string.
+ * @param	string	valueString		The string to analyze. 
+ * @returns	mixed					Boolean false on error, ie column is invalid, the column name as a string otherwise.
+ */
+Insert.prototype.getColumnAtPosition = function(position, valueString) {
+	try {
+
+		let openTuple = false,
+			openValue = false,
+			valueIndex = -1;
+
+		let str = valueString.trim().replace(/(;|,)$/, '');
+		// end of beginning of string - no columns available
+		if (position >= str.length || position === 0) {
+			return false;
+		}
+
+		for (let pos = 0; pos < str.length; ++pos) {
+			if ( (!openTuple && (str[pos] === ',' || str[pos].match(/\s/s))) || (openTuple && openValue === false && (str[pos] === ',' || str[pos].match(/\s/s))) ) {
+				continue;
+			}
+
+			// opening bracket of new tuple
+			if (!openTuple && str[pos] === '(') {
+				openTuple = true;
+				continue;
+			}
+			// closing bracket of current tuple, while no open value or open value was empty
+			if (openTuple && (openValue === false || openValue === '') && str[pos] === ')') {
+				if (openValue === '') {  // int or null as a value at the end
+					openValue = false;
+				}
+				openTuple = false;
+				continue;
+			}
+
+			// currently open value and the next char is a closing char the same as it was opened - but not escaped
+			// or there was no '"` as beginning then comma is the separator
+			if (openTuple && openValue !== false && ((str[pos] === openValue && str[pos-1] !== '\\') || (str[pos] === ',' && openValue === '') )) {
+				openValue = false;
+				if (pos >= position) {
+					break;
+				}
+				continue;
+			}
+
+			if (openTuple && openValue === false && (str[pos] === "'" || str[pos] === '"' || str[pos] === '`')) {
+				++valueIndex;
+				openValue = str[pos];
+				continue;
+			}
+			if (openValue === false) {
+				++valueIndex;
+				openValue = '';
+			}
+
+			// Specifically check at end, so "(3" with cursor before 3 will have 3 checked as openValue = '' -> ++valueIndex
+			if (pos >= position) {
+				if (!openTuple || openValue === false) {
+					valueIndex = -1;
+				}
+				break;
+			}
+		}
+
+		if (typeof(this.columns[valueIndex]) !== 'undefined') {
+			return this.columns[valueIndex];
+		}
+
+		throw("Invalid column");
+	} catch (e) {
 		return false;
 	}
 };
