@@ -2,7 +2,14 @@ button.outline-none:focus {
 	outline: none !important;
 }
 
-.cm-editor { height: 100%; }
+.cm-editor {
+	height: 100%;
+
+	.cm-tooltip {
+		@apply px-1 pb-1 mb-1 bg-blue-200 rounded text-sm font-serif italic;
+		transform: translateX(-50%);
+	}
+}
 
 .clear-button {
 	right: 12px;

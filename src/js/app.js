@@ -4,6 +4,7 @@ import Statement from './components/Statement';
 
 import { EditorState, EditorView, basicSetup } from "@codemirror/basic-setup";
 import { StateField } from '@codemirror/state';
+import { showTooltip } from "@codemirror/tooltip";
 
 window.notify = Notify;
 window.App = (function() {
@@ -117,10 +118,57 @@ window.App = (function() {
 				},
 			});
 
+			let toRemoveTooltip = undefined;
+			let getCursorTooltips = state => {
+				return state.selection.ranges.filter(range => range.empty).map(range => {
+					let line = state.doc.lineAt(range.head);
+					if (line.number > 1 && data.statementObject) {
+						let posOnLine = range.head - line.from;
+						let column = data.statementObject.getColumnAtPosition(posOnLine, line.text);
+						if (column !== false) {
+							clearTimeout(toRemoveTooltip);
+							toRemoveTooltip = setTimeout(() => {
+								try {
+									document.querySelector('.cm-cursor-tooltip').remove();
+								} catch (e) {
+									//
+								}
+							}, 500);
+
+							return {
+								pos: range.head,
+								above: true,
+								strictSide: true,
+								class: 'cm-cursor-tooltip',
+								create: () => {
+									let dom = document.createElement('div');
+									dom.textContent = column;
+									return { dom };
+								}
+							}
+						}
+					}
+
+					return false;
+				});
+			};
+			const tooltipExtension = StateField.define({
+				// we won't use the actual StateField value, null or undefined is fine
+				create: getCursorTooltips,
+				update(tooltips, tr) {
+					if (!tr.docChanged && !tr.selection) {
+						return tooltips;
+					}
+
+					return getCursorTooltips(tr.state);
+				},
+				provide: f => showTooltip.computeN([f], state => state.field(f))
+			});
+
 			// Create CodeEditor instance
 			data.codeEditor = new EditorView({
 				state: EditorState.create({
-					extensions: [ basicSetup, listenChangesExtension ],
+					extensions: [ basicSetup, listenChangesExtension, tooltipExtension ],
 					lineWrapping: true,
 				}),
 				parent: document.querySelector(codeInput)
