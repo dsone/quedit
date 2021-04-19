@@ -1,6 +1,7 @@
 import 'alpinejs';
 import Notify from './components/Notify';
 import Statement from './components/Statement';
+import Modal from './components/Modal';
 
 import { EditorState, EditorView, basicSetup } from "@codemirror/basic-setup";
 import { StateField } from '@codemirror/state';
@@ -9,7 +10,7 @@ import { showTooltip } from "@codemirror/tooltip";
 window.notify = Notify;
 window.App = (function() {
 	return new function() {
-		this.start = (fileSelector, filterSelector, codeInput) => {
+		this.start = (fileSelector, filterSelector, codeInput, modalTemplateRemove) => {
 			let data = {
 				codeEditor: undefined,
 				statement: new Statement({ notification: Notify }),
@@ -19,6 +20,7 @@ window.App = (function() {
 				filteredView: false,	// name of column to filter by
 				resetFilter: false,
 				editorDirty: false,		// when user switches the column tables a lot and changes values - make content of editor dirty->need to set column values, editor is dirty when this value is !== false, it gets the changed column
+				modalRemove: new Modal({ template: document.querySelector(modalTemplateRemove) }),
 			};
 
 			let cm = {
@@ -277,22 +279,24 @@ window.App = (function() {
 						notify.warning('Warning', `At least 1 column must be present, or your statement becomes invalid!`);
 						return;
 					}
-					if (confirm(`Entirely remove column '${column}' including it's values?`)) {
-						let newColumns;
+					data.modalRemove.confirm(column).then((accepted) => {
+						if (accepted) {
+							let newColumns;
 
-						if (newColumns = data.statementObject.removeColumn(column)) {
-							data.tableColumns = newColumns;
-							this.displayedTableColumns = data.tableColumns.slice(0);
+							if (newColumns = data.statementObject.removeColumn(column)) {
+								data.tableColumns = newColumns;
+								this.displayedTableColumns = data.tableColumns.slice(0);
 
-							this.cacheSearchFilter = {};  // reset or deleted column might be displayed
-							notify.success('Deleted', `'${ column }' was removed.`);
-						} else {
-							notify.danger('Error', `${ column } could not be removed, reverting.`);
+								this.cacheSearchFilter = {};  // reset or deleted column might be displayed
+								notify.success('Deleted', `'${ column }' was removed.`);
+							} else {
+								notify.danger('Error', `${ column } could not be removed, reverting.`);
+							}
+
+							data.resetFilter = true;  // trick codeEditor in not doing double the work
+							cm.setText(data.statementObject.assemble());
 						}
-
-						data.resetFilter = true;  // trick codeEditor in not doing double the work
-						cm.setText(data.statementObject.assemble());
-					}
+					});
 				},
 
 				clearApp() {
