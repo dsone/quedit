@@ -31,6 +31,14 @@ export default function Modal(config) {
 		this.config.domContent.classList.add('opacity-0', 'translate-y-4', 'sm:translate-y-0', 'sm:scale-95');
 
 		document.body.appendChild(this.config.domModal);
+		document.body.addEventListener('keyup', e => {
+			if (!this.config.open) {
+				return true;
+			}
+			if (e.key === 'Enter' || e.key === 'Escape') {
+				this.hide(e.key === 'Enter');
+			}
+		});
 
 		this.config.btnConfirm = this.config.domModal.querySelector('.js-confirm');
 		this.config.btnConfirm.addEventListener('click', e => {
