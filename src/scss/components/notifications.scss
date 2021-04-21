@@ -28,14 +28,6 @@
 			@apply w-1/6 h-6 -ml-3;
 		}
 
-		&:first-child {
-			@apply mt-0 opacity-100;
-		}
-
-		&:hover {
-			@apply shadow-md opacity-100;
-		}
-
 		&.is-danger {
 			@apply bg-red-200 border-red-600;
 
@@ -67,5 +59,12 @@
 				@apply text-green-900;
 			}
 		}
+	}
+
+	.notification-item:first-child {
+		@apply mt-0 opacity-100;
+	}
+	.notification-item:hover {
+		@apply shadow-md opacity-100;
 	}
 }

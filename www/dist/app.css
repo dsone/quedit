@@ -736,6 +736,24 @@ svg {
 	color: rgba(34, 84, 61, var(--tw-text-opacity));
 }
 
+.notifications .notification-item:first-child {
+	margin-top: 0px;
+}
+
+.notifications .notification-item:first-child {
+	opacity: 1;
+}
+
+.notifications .notification-item:hover {
+	opacity: 1;
+}
+
+.notifications .notification-item:hover {
+	--tw-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+	box-shadow: 0 0 #0000, 0 0 #0000, var(--tw-shadow);
+	box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
 button.outline-none:focus {
 	outline: none !important;
 }
