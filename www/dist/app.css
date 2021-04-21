@@ -1283,6 +1283,12 @@ button.outline-none:focus {
 	transition-duration: 150ms;
 }
 
+.transition-opacity {
+	transition-property: opacity;
+	transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+	transition-duration: 150ms;
+}
+
 .transition-colors {
 	transition-property: background-color, border-color, color, fill, stroke;
 	transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
@@ -1295,12 +1301,12 @@ button.outline-none:focus {
 	transition-duration: 150ms;
 }
 
-.duration-200 {
-	transition-duration: 200ms;
-}
-
 .duration-300 {
 	transition-duration: 300ms;
+}
+
+.duration-200 {
+	transition-duration: 200ms;
 }
 
 .ease-out {
