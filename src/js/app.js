@@ -314,6 +314,8 @@ window.App = (function() {
 				},
 
 				addColumn() {
+					if (this.selectedColumn.length > 0) { return; }
+
 					data.modalAdd.show().then(param => {
 						if (param[0] === true) {
 							let oldStatement = data.statementObject.assemble();
