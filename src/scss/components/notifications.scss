@@ -9,7 +9,7 @@
 	width: 400px;
 
 	.notification-item {
-		@apply w-full p-3 mt-4 text-base leading-snug transition-all border-l-4 rounded shadow-lg cursor-pointer opacity-80;
+		@apply w-full p-3 mt-4 text-base leading-snug transition-all border-l-4 rounded shadow-lg cursor-pointer opacity-80 select-none;
 		pointer-events: all;
 
 		.n-title {
