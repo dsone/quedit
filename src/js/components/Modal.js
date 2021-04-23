@@ -71,6 +71,7 @@ Modal.prototype.show = function() {
 			this.config.domContent.classList.add('ease-out', 'duration-300', 'opacity-100', 'translate-y-0', 'sm:scale-100');
 		}, 25);
 
+		this.config.btnConfirm.focus();
 		this.config.open = true;
 		this.config.activePromise = resolve;
 	});
