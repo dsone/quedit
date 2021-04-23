@@ -14,6 +14,11 @@ export default function Modal(config) {
 			domContent: undefined,
 			btnAbort: undefined,
 			btnConfirm: undefined,
+
+			onConfirm: () => true,
+			onAbort: () => true,
+			onShow: () => { this.config.btnConfirm.focus(); },
+			onResolve: resp => resp,
 		},
 		...config
 	};
@@ -45,10 +50,18 @@ export default function Modal(config) {
 			if (!this.config.open) {
 				return;
 			}
+
+			if (!this.config.onConfirm()) {
+				return;
+			}
 			this.hide(true);
 		});
 		this.config.btnAbort = this.config.domModal.querySelector('.js-abort');
 		this.config.btnAbort.addEventListener('click', e => {
+			if (!this.config.onAbort()) {
+				return;
+			}
+
 			this.hide(false);
 		});
 	} catch (e) {
@@ -71,9 +84,9 @@ Modal.prototype.show = function() {
 			this.config.domContent.classList.add('ease-out', 'duration-300', 'opacity-100', 'translate-y-0', 'sm:scale-100');
 		}, 25);
 
-		this.config.btnConfirm.focus();
 		this.config.open = true;
 		this.config.activePromise = resolve;
+		this.config.onShow();
 	});
 };
 
@@ -90,7 +103,7 @@ Modal.prototype.hide = function(accepted) {
 	setTimeout(() => this.config.domModal.classList.add('hidden'), 200);
 
 	this.config.open = false;
-	this.config.activePromise(accepted);
+	this.config.activePromise(this.config.onResolve(accepted));
 	this.config.activePromise = undefined;
 };
 
