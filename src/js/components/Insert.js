@@ -120,7 +120,20 @@ Insert.prototype.analyze = function(insertText) {
 		return false;
 	}
 
+	let toInfo = undefined;
 	try {
+		let reCountInsert = /INSERT\sINTO\s`(.+?)`\s+\((.+?)\)\s+VALUES\s?/gims;
+		let countInserts = text.match(reCountInsert);
+		if (countInserts && countInserts.length > 1) {
+			for (let i = 0; i < countInserts.length-1; ++i) {
+				if (countInserts[i].trim() != countInserts[i+1].trim()) {
+					throw('Multiple incompatible INSERT statements found.')
+				}
+			}
+		} else {
+			countInserts = [];  // this way we can use .length either way
+		}
+
 		// get parts
 		let [ , table, columns, values ] = [ ...matched ];
 		this.tableName = table;
@@ -135,7 +148,18 @@ Insert.prototype.analyze = function(insertText) {
 		}
 		this.columns = columns;
 
-		// Values, remove leading and closing brackets
+		// Values
+		// Remove multiple inserts
+		if (countInserts.length > 1) {
+			values = values.split(countInserts[0]).join('');
+
+			// delay the info, in case mismatched value count triggers exception
+			// if there's a LOT of text to parse, taking longer than ~XYms it's okay to first display the info
+			toInfo = setTimeout(() => {
+				this.config.parent.notify('info', 'Duplicate INSERT\'s detected', 'They will be ignored/removed on change.');
+			}, 500);
+		}
+		// Remove leading and closing brackets
 		values = values.trim();
 
 		let foundTuples = [],
@@ -194,7 +218,7 @@ Insert.prototype.analyze = function(insertText) {
 		this.mapColumnsToValues = [];
 		for (let i = 0; i < foundTuples.length; ++i) {
 			if (foundTuples[i].length !== columns.length) {
-				throw(`Found ${ foundTuples[i].length } values in row ${ i }, ${ columns.length } values expected, abort!`);
+				throw(`Found ${ foundTuples[i].length } values in row ${ i+1 }, ${ columns.length } values expected, abort!`);
 			}
 
 			for (let j = 0; j < foundTuples[ i ].length; ++j) {
@@ -212,6 +236,7 @@ Insert.prototype.analyze = function(insertText) {
 		this.config.isValid = true;
 		return true;
 	} catch (e) {
+		clearTimeout(toInfo);
 		this.config.parent.notify('danger', e);
 		console.error(e);
 		this.reset();
