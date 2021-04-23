@@ -14,6 +14,7 @@ function createWindow() {
 	
 	// und lade die index.html der App.
 	win.loadFile('./www/index.html');
+	win.setAutoHideMenuBar(true);
 
 	if (isDevMode) {
 		win.webContents.openDevTools();
