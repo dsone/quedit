@@ -10,7 +10,7 @@ import { showTooltip } from "@codemirror/tooltip";
 window.notify = Notify;
 window.App = (function() {
 	return new function() {
-		this.start = (fileSelector, filterSelector, codeInput, modalTemplateRemove) => {
+		this.start = (fileSelector, filterSelector, codeInput, modalTemplateRemove, modalTemplateAdd) => {
 			let data = {
 				codeEditor: undefined,
 				statement: new Statement({ notification: Notify }),
@@ -21,6 +21,20 @@ window.App = (function() {
 				resetFilter: false,
 				editorDirty: false,		// when user switches the column tables a lot and changes values - make content of editor dirty->need to set column values, editor is dirty when this value is !== false, it gets the changed column
 				modalRemove: new Modal({ template: document.querySelector(modalTemplateRemove) }),
+				modalAdd: new Modal({
+						template: document.querySelector(modalTemplateAdd), 
+						// this is the config object in the context of these callbacks 
+						onShow: function() {
+							this.domModal.querySelector('.js-input').value = '';
+							this.domModal.querySelector('.js-input').focus();
+						},
+						onConfirm: function() {
+							return this.domModal.querySelector('.js-input').value !== '';
+						},
+						onResolve: function(accepted) {
+							return [ accepted, this.domModal.querySelector('.js-input').value ];
+						}
+					}),
 			};
 
 			let cm = {
@@ -295,6 +309,24 @@ window.App = (function() {
 
 							data.resetFilter = true;  // trick codeEditor in not doing double the work
 							cm.setText(data.statementObject.assemble());
+						}
+					});
+				},
+
+				addColumn() {
+					data.modalAdd.show().then(param => {
+						if (param[0] === true) {
+							let oldStatement = data.statementObject.assemble();
+							if (data.statementObject.addColumn(param[1])) {
+								let statement = data.statementObject.assemble();
+								if (statement !== undefined) {
+									// use new insert text for CM
+									cm.setText(statement);
+									return;
+								}
+							}
+
+							cm.setText(oldStatement);
 						}
 					});
 				},
