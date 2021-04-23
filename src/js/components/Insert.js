@@ -83,7 +83,7 @@ Insert.prototype.assemble = function() {
 		for (let val = 0; val < rows; ++val) {
 			let row = [];
 			for (let col = 0; col < this.columns.length; ++col) {
-				row.push(/*'`' + */this.mapColumnsToValues[ col ][ val ]/* + '`'*/);
+				row.push(this.mapColumnsToValues[ col ][ val ]);
 			}
 
 			values.push('(' + row.join(', ') + ')');
@@ -260,7 +260,7 @@ Insert.prototype.getTable = function() {
  * @returns	Array	A sorted Array of columns, empty if not yet set.
  */
 Insert.prototype.getColumns = function() {
-	return this.columns.slice(0).sort();
+	return this.columns.slice(0).sort((a, b) => a.toLocaleLowerCase().localeCompare(b.toLocaleLowerCase()));
 };
 
 /**
@@ -383,7 +383,7 @@ Insert.prototype.updateValues = function(column, values) {
 		}
 
 		for (let i = 0; i < rows; ++i) {
-			let newValue = values[ i ]/*.replace(/^(`|'|")|(`|'|")$/g, '')*/.trim();
+			let newValue = values[ i ].trim();
 
 			// Update the value
 			this.values[ i ][ colIndex ] = newValue;
@@ -474,6 +474,33 @@ Insert.prototype.getColumnAtPosition = function(position, valueString) {
 
 		throw("Invalid column");
 	} catch (e) {
+		return false;
+	}
+};
+
+/**
+ * Adds a new column.
+ * 
+ * @param	string	columnName	The new column name to add.
+ * @param	mixed	value		Optional new value, default is empty string.
+ * @returns	bool				A boolean indicating success.
+ */
+Insert.prototype.addColumn = function(columnName, value = "''") {
+	try {
+		this.columns.push(columnName);
+		this.mapColumnToIndex[columnName] = this.columns.length-1;
+
+		this.mapColumnsToValues.push([]);
+		for (let i = 0; i < this.values.length; ++i) {
+			this.values[ this.mapColumnToIndex[columnName] ].push(value);
+			this.mapColumnsToValues[ this.mapColumnToIndex[columnName] ].push(value);
+		}
+
+		return true;
+	} catch (e) {
+		this.config.parent.notify('danger', e);
+		console.error(e);
+
 		return false;
 	}
 };
