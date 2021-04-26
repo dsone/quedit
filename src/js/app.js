@@ -3,7 +3,7 @@ import Notify from './components/Notify';
 import Statement from './components/Statement';
 import Modal from './components/Modal';
 
-import { EditorState, EditorView, basicSetup } from "@codemirror/basic-setup";
+import { EditorState, EditorView, codeMirrorSetup } from "./components/CodeMirrorSetup";
 import { StateField } from '@codemirror/state';
 import { showTooltip } from "@codemirror/tooltip";
 
@@ -184,7 +184,7 @@ window.App = (function() {
 			// Create CodeEditor instance
 			data.codeEditor = new EditorView({
 				state: EditorState.create({
-					extensions: [ basicSetup, listenChangesExtension, tooltipExtension ],
+					extensions: [ codeMirrorSetup, listenChangesExtension, tooltipExtension ],
 					lineWrapping: true,
 				}),
 				parent: document.querySelector(codeInput)
