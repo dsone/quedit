@@ -263,7 +263,7 @@ Insert.prototype.getTable = function() {
  * @returns	Array	A sorted Array of columns, empty if not yet set.
  */
 Insert.prototype.getColumns = function() {
-	return this.columns.slice(0).sort((a, b) => a.toLocaleLowerCase().localeCompare(b.toLocaleLowerCase()));
+	return this.columns.slice(0).sort((a, b) => a.length != b.length ? a.length - b.length : a.toLocaleLowerCase().localeCompare(b.toLocaleLowerCase()));
 };
 
 /**
