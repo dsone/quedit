@@ -26,13 +26,26 @@ window.App = (function() {
 						// this is the config object in the context of these callbacks 
 						onShow: function() {
 							this.domModal.querySelector('.js-input').value = '';
+							this.domModal.querySelector('.js-input-2').value = '';
 							this.domModal.querySelector('.js-input').focus();
 						},
 						onConfirm: function() {
-							return this.domModal.querySelector('.js-input').value !== '';
+							let newColumnName = this.domModal.querySelector('.js-input').value;
+							let nonEmptyAndAvailable = newColumnName !== '';
+							if (!nonEmptyAndAvailable) {
+								this.domModal.querySelector('.js-input').focus();
+							}
+
+							if (data.statementObject.isColumnAvailable(newColumnName)) {
+								nonEmptyAndAvailable = false;
+								this.domModal.querySelector('.js-input').focus();
+								notify.danger('Add column failed', 'The name is already in use');
+							}
+
+							return nonEmptyAndAvailable;
 						},
 						onResolve: function(accepted) {
-							return [ accepted, this.domModal.querySelector('.js-input').value ];
+							return [ accepted, this.domModal.querySelector('.js-input').value, this.domModal.querySelector('.js-input-2').value ];
 						}
 					}),
 			};
@@ -319,7 +332,7 @@ window.App = (function() {
 					data.modalAdd.show().then(param => {
 						if (param[0] === true) {
 							let oldStatement = data.statementObject.assemble();
-							if (data.statementObject.addColumn(param[1])) {
+							if (data.statementObject.addColumn(param[1], param[2])) {
 								let statement = data.statementObject.assemble();
 								if (statement !== undefined) {
 									// use new insert text for CM

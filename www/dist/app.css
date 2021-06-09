@@ -1216,6 +1216,10 @@ button.outline-none:focus {
 	padding-bottom: 1.25rem;
 }
 
+.pr-3 {
+	padding-right: 0.75rem;
+}
+
 .text-center {
 	text-align: center;
 }

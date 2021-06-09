@@ -482,20 +482,35 @@ Insert.prototype.getColumnAtPosition = function(position, valueString) {
 };
 
 /**
+ * Check if the name of a column is currently present in a statement.
+ * 
+ * @param	string	nameOfColumn	Name of column to check.
+ * @returns	bool					True if column is present in the statement, false otherwise.
+ */
+Insert.prototype.isColumnAvailable = function(nameOfColumn) {
+	return typeof(this.mapColumnToIndex[ nameOfColumn ]) !== 'undefined';
+};
+
+/**
  * Adds a new column.
  * 
  * @param	string	columnName	The new column name to add.
  * @param	mixed	value		Optional new value, default is empty string.
  * @returns	bool				A boolean indicating success.
  */
-Insert.prototype.addColumn = function(columnName, value = "''") {
+Insert.prototype.addColumn = function(columnName, value = "NULL") {
 	try {
+		value = value.length > 0 ? value : "NULL";
+		if (!value.match(/^NULL$/i) && value.match(/[a-zA-Z_]+/) !== null && !value.match(/`|"|'/)) {
+			value = '"' + value + '"';
+		}
+
 		this.columns.push(columnName);
 		this.mapColumnToIndex[columnName] = this.columns.length-1;
 
 		this.mapColumnsToValues.push([]);
 		for (let i = 0; i < this.values.length; ++i) {
-			this.values[ this.mapColumnToIndex[columnName] ].push(value);
+			this.values[ i ].push(value);
 			this.mapColumnsToValues[ this.mapColumnToIndex[columnName] ].push(value);
 		}
 
