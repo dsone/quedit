@@ -390,9 +390,9 @@ svg {
 	animation-fill-mode: both;
 }
 
-.animated.fast {
-	-webkit-animation-duration: 800ms;
-	animation-duration: 800ms;
+.animated.faster {
+	-webkit-animation-duration: 500ms;
+	animation-duration: 500ms;
 }
 
 /* Fade in effect */
@@ -485,60 +485,6 @@ svg {
 	}
 }
 
-@-webkit-keyframes fadeInDown {
-
-	to {
-		opacity: 1;
-		-webkit-transform: translate3d(0, 0, 0);
-		transform: translate3d(0, 0, 0);
-	}
-}
-
-@keyframes fadeInDown {
-	from {
-		opacity: 0;
-		-webkit-transform: translate3d(0, -100%, 0);
-		transform: translate3d(0, -100%, 0);
-	}
-
-	to {
-		opacity: 1;
-		-webkit-transform: translate3d(0, 0, 0);
-		transform: translate3d(0, 0, 0);
-	}
-}
-
-.fadeInDown {
-	-webkit-animation-name: fadeInDown;
-	animation-name: fadeInDown;
-}
-
-@-webkit-keyframes fadeOutRight {
-
-	to {
-		opacity: 0;
-		-webkit-transform: translate3d(100%, 0, 0);
-		transform: translate3d(100%, 0, 0);
-	}
-}
-
-@keyframes fadeOutRight {
-	from {
-		opacity: 1;
-	}
-
-	to {
-		opacity: 0;
-		-webkit-transform: translate3d(100%, 0, 0);
-		transform: translate3d(100%, 0, 0);
-	}
-}
-
-.fadeOutRight {
-	-webkit-animation-name: fadeOutRight;
-	animation-name: fadeOutRight;
-}
-
 @-webkit-keyframes pulse {
 
 	to {
@@ -564,14 +510,59 @@ svg {
 	}
 }
 
+@-webkit-keyframes fadeInUp {
+	to {
+		opacity: 1;
+		-webkit-transform: translate3d(0, 0, 0);
+	}
+}
+
+@keyframes fadeInUp {
+	from {
+		opacity: 0;
+		transform: translate3d(0, 100%, 0);
+	}
+	to {
+		opacity: 1;
+		transform: translate3d(0, 0, 0);
+	}
+}
+
+.fadeInUp {
+	-webkit-animation-name: fadeInUp;
+	animation-name: fadeInUp;
+}
+
+@-webkit-keyframes fadeOutLeft {
+
+	to {
+		opacity: 0;
+		-webkit-transform: translate3d(-100%, 0, 0);
+	}
+}
+
+@keyframes fadeOutLeft {
+	from {
+		opacity: 1;
+	}
+
+	to {
+		opacity: 0;
+		transform: translate3d(-100%, 0, 0);
+	}
+}
+
+.fadeOutLeft {
+	-webkit-animation-name: fadeOutLeft;
+	animation-name: fadeOutLeft;
+}
+
 /* NOTIFICATIONS */
 
 .notifications {
 	pointer-events: none;
 	position: fixed;
 	right: 0px;
-	padding-top: 1.5rem;
-	padding-bottom: 1.5rem;
 	padding-left: 0.25rem;
 	padding-right: 0.25rem;
 	transition-property: box-shadow;
@@ -581,8 +572,8 @@ svg {
 	/* pointer-events makes sure that click events go through to underlying elements */
 	z-index: 51; /* make sure notifications are above modals, while modals are over anything else */
 
-	top: 10px;
-	right: 6px;
+	bottom: 8px;
+	left: 6px;
 	width: 400px;
 }
 
@@ -607,11 +598,11 @@ svg {
 }
 
 .notifications .notification-item {
-	border-left-width: 4px;
+	border-right-width: 4px;
 }
 
 .notifications .notification-item {
-	padding: 0.75rem;
+	padding: 0.5rem;
 }
 
 .notifications .notification-item {
@@ -640,6 +631,10 @@ svg {
 }
 
 .notifications .notification-item {
+	transition-duration: 200ms;
+}
+
+.notifications .notification-item {
 		pointer-events: all;
 	}
 
@@ -662,10 +657,6 @@ svg {
 
 .notifications .notification-item .n-text {
 	overflow-y: auto;
-}
-
-.notifications .notification-item .n-text {
-	padding-top: 0.25rem;
 }
 
 .notifications .notification-item .n-text {

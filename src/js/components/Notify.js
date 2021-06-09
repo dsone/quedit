@@ -65,9 +65,9 @@ function Notify(title = 'title', text = 'text', cfg = {}) {
 			// the template for notifications to use
 			templateHTML: document.querySelector('#notification-item').innerHTML,
 			// class for opening animation
-			openingAnimationClass: 'fadeInDown',
+			openingAnimationClass: 'fadeInUp',
 			// class for closing animation
-			closingAnimationClass: 'fadeOutRight',
+			closingAnimationClass: 'fadeOutLeft',
 			// close btn hover:color for info and warning
 			warningInfoCloseColor: 'text-gray-500',
 			// close bnt hover:color for danger and success

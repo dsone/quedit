@@ -136,68 +136,6 @@
 	animation-name: fadeInRight;
 }
 
-@-webkit-keyframes fadeInDown {
-	from {
-		opacity: 0;
-		-webkit-transform: translate3d(0, -100%, 0);
-		transform: translate3d(0, -100%, 0);
-	}
-
-	to {
-		opacity: 1;
-		-webkit-transform: translate3d(0, 0, 0);
-		transform: translate3d(0, 0, 0);
-	}
-}
-
-@keyframes fadeInDown {
-	from {
-		opacity: 0;
-		-webkit-transform: translate3d(0, -100%, 0);
-		transform: translate3d(0, -100%, 0);
-	}
-
-	to {
-		opacity: 1;
-		-webkit-transform: translate3d(0, 0, 0);
-		transform: translate3d(0, 0, 0);
-	}
-}
-
-.fadeInDown {
-	-webkit-animation-name: fadeInDown;
-	animation-name: fadeInDown;
-}
-
-@-webkit-keyframes fadeOutRight {
-	from {
-		opacity: 1;
-	}
-
-	to {
-		opacity: 0;
-		-webkit-transform: translate3d(100%, 0, 0);
-		transform: translate3d(100%, 0, 0);
-	}
-}
-
-@keyframes fadeOutRight {
-	from {
-		opacity: 1;
-	}
-
-	to {
-		opacity: 0;
-		-webkit-transform: translate3d(100%, 0, 0);
-		transform: translate3d(100%, 0, 0);
-	}
-}
-
-.fadeOutRight {
-	-webkit-animation-name: fadeOutRight;
-	animation-name: fadeOutRight;
-}
-
 @-webkit-keyframes pulse {
 	from {
 		-webkit-transform: scale3d(1, 1, 1);
@@ -235,4 +173,56 @@
 .pulse {
 	-webkit-animation-name: pulse;
 	animation-name: pulse;
+}
+
+@-webkit-keyframes fadeInUp {
+	from {
+		opacity: 0;
+		-webkit-transform: translate3d(0, 100%, 0);
+	}
+	to {
+		opacity: 1;
+		-webkit-transform: translate3d(0, 0, 0);
+	}
+}
+@keyframes fadeInUp {
+	from {
+		opacity: 0;
+		transform: translate3d(0, 100%, 0);
+	}
+	to {
+		opacity: 1;
+		transform: translate3d(0, 0, 0);
+	}
+}
+
+.fadeInUp {
+	-webkit-animation-name: fadeInUp;
+	animation-name: fadeInUp;
+}
+
+@-webkit-keyframes fadeOutLeft {
+	from {
+		opacity: 1;
+	}
+
+	to {
+		opacity: 0;
+		-webkit-transform: translate3d(-100%, 0, 0);
+	}
+}
+@keyframes fadeOutLeft {
+	from {
+		opacity: 1;
+	}
+
+	to {
+		opacity: 0;
+		transform: translate3d(-100%, 0, 0);
+	}
+}
+
+.fadeOutLeft {
+	-webkit-animation-name: fadeOutLeft;
+	animation-name: fadeOutLeft;
 }

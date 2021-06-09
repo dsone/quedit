@@ -1,15 +1,15 @@
 /* NOTIFICATIONS */
 .notifications {
-	@apply fixed right-0 py-6 px-1 transition-shadow duration-500 pointer-events-none;
+	@apply fixed right-0 px-1 transition-shadow duration-500 pointer-events-none;
 	/* pointer-events makes sure that click events go through to underlying elements */
 	z-index: 51; /* make sure notifications are above modals, while modals are over anything else */
 
-	top: 10px;
-	right: 6px;
+	bottom: 8px;
+	left: 6px;
 	width: 400px;
 
 	.notification-item {
-		@apply w-full p-3 mt-4 text-base leading-snug transition-all border-l-4 rounded shadow-lg cursor-pointer opacity-80 select-none;
+		@apply w-full p-2 mt-4 text-base leading-snug transition-all border-r-4 rounded shadow-lg cursor-pointer opacity-80 select-none duration-200;
 		pointer-events: all;
 
 		.n-title {
@@ -21,7 +21,7 @@
 		}
 
 		.n-text {
-			@apply pt-1 overflow-y-auto text-sm;
+			@apply overflow-y-auto text-sm;
 		}
 
 		.n-icon {
