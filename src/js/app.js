@@ -121,13 +121,13 @@ window.App = (function() {
 									document.querySelector('body[x-data]').__x.$data.displayedTableColumns = data.tableColumns.slice(0);
 									document.querySelector('body[x-data]').__x.$data.contextName = data.statementObject.getTable();
 
-									scrollToTop && data.codeEditor.dispatch({ selection: { anchor: 0 }, scrollIntoView: true });
+									scrollToTop && transaction.newDoc.toJSON().length > 27 && data.codeEditor.dispatch({ selection: { anchor: 0 }, scrollIntoView: true });
 								} else {
 									document.querySelector('body[x-data]').__x.$data.displayedTableColumns = [];
 									document.querySelector('body[x-data]').__x.$data.contextName = 'QuEdit';
 								}
 							}
-						}, 250);
+						}, 500);
 					}
 
 					return null;

@@ -111,7 +111,7 @@ Insert.prototype.assemble = function() {
 Insert.prototype.analyze = function(insertText) {
 	this.insertText = insertText;
 	let text = insertText;
-	let reInsert = /INSERT\sINTO\s`(.+?)`\s+\((.+?)\)\s+VALUES\s?(.*)/gims;
+	let reInsert = /INSERT\sINTO\s[`'" ]?(.+?)[`'" ]?\s+\((.+?)\)\s+VALUES\s?(.*)/gims;
 
 	let matched = reInsert.exec(text);
 	if (!matched) {
@@ -122,7 +122,7 @@ Insert.prototype.analyze = function(insertText) {
 
 	let toInfo = undefined;
 	try {
-		let reCountInsert = /INSERT\sINTO\s`(.+?)`\s+\((.+?)\)\s+VALUES\s?/gims;
+		let reCountInsert = /INSERT\sINTO\s[`'" ]?(.+?)[`'" ]?[`'"]\s+\((.+?)\)\s+VALUES\s?/gims;
 		let countInserts = text.match(reCountInsert);
 		if (countInserts && countInserts.length > 1) {
 			for (let i = 0; i < countInserts.length-1; ++i) {
@@ -232,6 +232,9 @@ Insert.prototype.analyze = function(insertText) {
 			}
 		}
 		this.values = foundTuples;
+		if (foundTuples.length === 0) {
+			return false;
+		}
 
 		this.config.isValid = true;
 		return true;
