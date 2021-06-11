@@ -4,7 +4,6 @@
 
 ## Table of Contents
 - [Features](#features)
-- [Example](#example)
 - [Installation](#installation)
     - [Bundling](#bundling)
 - [How To Use](#how-to-use)
@@ -27,22 +26,19 @@
 
 \* Hardware limitations apply :} 
 
-## Example
-TODO
-
 ## Installation
 2 very easy steps:
 1. `git clone https://github.com/dsone/quedit.git && cd quedit`
 2. `npm install`
 
-### Bundling
+### Packaging
 To actually use this repository as an Electron app, you need to bundle it into a package for your operating system first.  
 In the Installation step above you have already installed everything that is necessary to do just that!  
   
-Go into the QuEdit folder with a terminal programm of your choice and type in `npm run build`.  
-The electron packager will now create a bundled version of QuEdit according to your OS specifics.  
-When the packager is done, there is a new folder called "_electron-build_".  
-Inside that folder is one or more folder with an Electron app compatible with your OS.
+Go into the QuEdit folder with a terminal program of your choice and type in `npm run package` to create a non-bundled version of QuEdit compatible with your operating system.  
+When completed, there is a new folder called "_out_", inside is the non-distributable executable version of QuEdit.  
+  
+To create an executable Setup program, installing QuEdit into `%APPDATA%/Local` or your OS specific equivalent, use `npm run make`. 
   
 Read more about packaging here:
 https://www.electronjs.org/docs/latest/get-started/quick-start#package-and-distribute-your-application
