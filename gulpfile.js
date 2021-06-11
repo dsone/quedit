@@ -34,8 +34,8 @@ gulp.task('sass', function () {
 	return gulp.src('src/scss/app.scss')
 				.pipe(postcss([
 					require('postcss-import'),
-					require('tailwindcss'),
 					require('postcss-nested'),
+					require('tailwindcss'),
 					require('postcss-custom-properties'),
 					...options.env === 'production' ? [ purgeCss ] : []
 				]))
