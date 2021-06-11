@@ -23,14 +23,14 @@
 					<div class="flex h-full bg-white">
 						<div class="flex-initial w-1/2 bg-gray-200 border-r border-blue-200 md:w-1/3 xl:w-1/4">
 							<div class="flex flex-col h-full">
-								<div class="transition-shadow duration-600" :class="{ 'shadow-md bg-blue-100': displayedTableColumns.length > 0 }">
+								<div class="transition-shadow duration-600" :class="{ 'shadow-md bg-blue-100': displayedTableColumns.length > 0 || searchTableColumnsByText.length > 0 }">
 									<div class="p-2 text-black">
 										<div class="italic font-semibold text-center text-md" :class="{ 'select-none': contextName === 'QuEdit' }">
 											<span class="break-all" x-text="contextName"></span>
 										</div>
 									</div>
 									<div class="relative p-2 mt-2">
-										<input type="text" class="w-full px-2 py-1 text-sm transition-opacity duration-300 outline-none js-filterby" :class="{ 'opacity-0 pointer-events-none': displayedTableColumns.length === 0, 'border border-blue-200': displayedTableColumns.length > 0 }" placeholder="Search..." x-on:keyup="filterColumns">
+										<input type="text" class="w-full px-2 py-1 text-sm transition-opacity duration-300 outline-none js-filterby" :class="{ 'opacity-0 pointer-events-none': displayedTableColumns.length === 0 && searchTableColumnsByText.length === 0, 'border border-blue-200': displayedTableColumns.length > 0 ||searchTableColumnsByText.length > 0 }" placeholder="Search..." x-on:keyup="filterColumns">
 										<span class="absolute h-4 transition-colors duration-200 cursor-pointer clear-button hover:text-red-700" @click="clearFilter" x-show="clearButton">
 											<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" stroke="currentColor">
 												<title>Clear</title>
@@ -41,7 +41,7 @@
 								</div>
 								<div class="pb-2 overflow-auto">
 									<div class="text-sm leading-4">
-										<div class="relative transition-opacity duration-200" :class="{ 'opacity-100': displayedTableColumns.length > 0, 'opacity-0 pointer-events-none': displayedTableColumns.length === 0 }">
+										<div class="relative transition-opacity duration-200" :class="{ 'opacity-100': displayedTableColumns.length > 0 || searchTableColumnsByText.length.length > 0, 'opacity-0 pointer-events-none': displayedTableColumns.length === 0 && searchTableColumnsByText.length === 0 }">
 											<a href="#void" class="block py-2 pl-6 pr-8 text-xs text-center text-gray-600 transition-all duration-200 ease-out" @click="addColumn" :class="{ 'opacity-60 cursor-not-allowed': selectedColumn.length > 0, 'hover:bg-gray-400 hover:text-black hover:ease-in hover:shadow-inner': selectedColumn.length === 0 }">
 												<svg xmlns="http://www.w3.org/2000/svg" class="inline-block w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
 													<path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
