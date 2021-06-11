@@ -336,6 +336,11 @@ window.App = (function() {
 							if (data.statementObject.addColumn(param[1], param[2])) {
 								let statement = data.statementObject.assemble();
 								if (statement !== undefined) {
+									// reset existing filter
+									if (this.searchTableColumnsByText.length > 0) {
+										this.clearFilter();
+									}
+
 									// use new insert text for CM
 									cm.setText(statement);
 									return;
