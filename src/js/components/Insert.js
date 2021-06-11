@@ -111,8 +111,8 @@ Insert.prototype.assemble = function() {
 Insert.prototype.analyze = function(insertText) {
 	this.insertText = insertText;
 	let text = insertText;
-	let reInsert = /INSERT\sINTO\s[`'" ]?(.+?)[`'" ]?\s+\((.+?)\)\s+VALUES\s?(.*)/gims;
-
+	let reInsert = /INSERT\sINTO\s[`'" ]?(.+?)[`'" ]?\s+\((.+?)\)\s+VALUES\s?(.*(\)|;)$)/ims;
+ 
 	let matched = reInsert.exec(text);
 	if (!matched) {
 		this.reset();
