@@ -45,7 +45,7 @@ When the packager is done, there is a new folder called "_electron-build_".
 Inside that folder is one or more folder with an Electron app compatible with your OS.
   
 Read more about packaging here:
-https://www.electronjs.org/docs/tutorial/quick-start#package-and-distribute-the-application
+https://www.electronjs.org/docs/latest/get-started/quick-start#package-and-distribute-your-application
 
 ## How to use
 
