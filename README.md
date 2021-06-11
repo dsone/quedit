@@ -66,13 +66,17 @@ If these statements are compatible, ie. they target the same table with the same
   
 ### Making changes
 Once your manually entered, copied or a via "File" opened statement is valid, QuEdit will catch up on that and display all found columns in your statement on the left side.  
+  
 These columns are clickable: if you click one (making it "active"), the text editor will only show the value of the clicked column for each row of your statement in the text editor.  
 To see the entire SQL statement again, just click the active column again to deselect. If you wish, you might change some or all values while a column is selected.  
 Once you deselect - or select another column to change that, too - your entire SQL statement will have the new values automagically.  
+<img src="./src/img/edit.gif" />
+  
 In case you accidentally delete a row and deselect, QuEdit will show you a notification that the amount of rows for that column doesn't match the row count for all other columns and revert to the last valid SQL statement.  
   
 Although, beware that QuEdit does not assume any datatypes for your data. You might change data from `int` to `string`, while your database wants `int` still.  
 QuEdit will not know about that and won't prevent you from doing that.
+
 
 ## Tooltips
 When you click around or move the text cursor by arrow keys in the text editor with a valid SQL statement present, you'll get to see a tooltip popping up shortly.  
