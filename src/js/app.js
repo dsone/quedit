@@ -264,6 +264,7 @@ window.App = (function() {
 
 						if (this.searchTableColumnsByText.length === 0) {
 							this.displayedTableColumns = data.tableColumns.slice(0);
+							this.clearButton = false;
 
 							return;
 						} else if (typeof(this.cacheSearchFilter[this.searchTableColumnsByText]) !== 'undefined') {
