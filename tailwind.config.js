@@ -3,6 +3,7 @@ module.exports = {
 	purge: [
 		'./www/**/*.html',
 		'./www/dist/js/*.js',
+		'./www/src/js/**/*.js',
 	],
 	theme: {
 		extend: {
