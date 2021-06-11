@@ -8,7 +8,7 @@
     "dev": "concurrently --kill-others \"gulp watch\" \"npm run start\"",
     "package": "electron-forge package",
     "make": "electron-forge make",
-    "build": "electron-packager . QuEdit --all--out=./electron-build"
+    "build": "electron-packager . QuEdit --all --out=./electron-build"
   },
   "author": "dsone",
   "license": "ISC",
@@ -55,7 +55,7 @@
         {
           "name": "@electron-forge/maker-squirrel",
           "config": {
-            "name": "quedit"
+            "name": "QuEdit"
           }
         },
         {
