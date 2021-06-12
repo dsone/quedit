@@ -2,7 +2,10 @@
 	<a href="https://github.com/dsone/quedit.git" target="_blank" rel="noopener noreferrer"><img src="src/img/logo.png?raw=true" width="32px"/></a> QuEdit
 </h1>
 
+A tool to easily and quickly mutate your INSERT SQL statements. For when you need to migrate tens of thousands of rows from one table to another by hand.
+
 ## Table of Contents
+- [Motivation](#motivation)
 - [Features](#features)
 - [Installation](#installation)
     - [Bundling](#bundling)
@@ -14,6 +17,16 @@
     - [Delete a column](#delete-a-column)
     - [Add a new column](#add-a-new-column)
     - [Search](#search)
+
+## Motivation
+Imagine this scenario: You have a database that must be migrated to another system. The catch: you cannot just dump the entire DB and import it. 
+Instead, you export every table entirely, open it in your text editor of choice and manipulate what needs to be changed by hand/regular expressions. 
+Or, you create your custom queries to export mutated result sets from the tables directly, which means you must write the exact column names for every table.  
+  
+Does this sound familiar? Then you are propably no stranger to all kinds of mistakes that happen frequently for several reasons.  
+What if: You can simply export the entire table and then easily change only specific column values where necessary?  
+Without the danger of affecting the whole table data when you make a mistake. Without the need to write custom queries, or complex regular expressions.  
+Simplifying the whole process for everyone, making mistakes less frequent and less problematic if they happen. Increasing the trust in the changes you made.
 
 ## Features
 - Select all row data of an INSERT SQL statement by column (select "vertically")
