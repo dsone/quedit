@@ -129,6 +129,7 @@ window.App = (function() {
 								data.statementObject = data.statement.createObject(transaction.newDoc.toJSON().join(''));
 								if (data.statementObject) {
 									data.tableColumns = data.statementObject.getColumns();
+									console.log(data.tableColumns);
 
 									// outside of alpine this is a hacky way of accessing data
 									document.querySelector('body[x-data]').__x.$data.displayedTableColumns = data.tableColumns.slice(0);
