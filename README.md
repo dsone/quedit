@@ -103,7 +103,7 @@ This will delete the column in all rows for you.
 ### Add a new column
 Sometimes you need to do the opposite and add a new colum. This can be done via the "+ Add new column" above the existing columns.  
 If you do not see it, you need to scroll back up in the sidebar. ;)  
-When clicked, a modal dialog will ask your for the name of the new column. By default, an empty string will be set as the value and the column will be added at the end of your SQL statement.
+When clicked, a modal dialog will ask your for the name of the new column. By default, a `NULL` value will be set as the value and the column will be added at the end of your SQL statement.
 <img src="./src/img/add_column.gif" />
 
 ### Search
