@@ -10,7 +10,7 @@ import { showTooltip } from "@codemirror/tooltip";
 window.notify = Notify;
 window.App = (function() {
 	return new function() {
-		this.start = (fileSelector, filterSelector, codeInput, modalTemplateRemove, modalTemplateAdd) => {
+		this.start = (fileSelector, filterSelector, codeInput, modalTemplateRemove, modalTemplateAdd, modalTemplateRename) => {
 			let data = {
 				codeEditor: undefined,
 				statement: new Statement({ notification: Notify }),
@@ -46,6 +46,37 @@ window.App = (function() {
 						},
 						onResolve: function(accepted) {
 							return [ accepted, this.domModal.querySelector('.js-input').value, this.domModal.querySelector('.js-input-2').value ];
+						}
+					}),
+					modalRename: new Modal({
+						template: document.querySelector(modalTemplateRename),
+						onShow: function() {
+							this.domModal.querySelector('.js-input').value = '';
+							this.domModal.querySelector('.js-input').focus();
+						},
+						onConfirm: function() {
+							let newColumnName = this.domModal.querySelector('.js-input').value;
+							let nonEmptyAndAvailable = newColumnName !== '';
+							if (!nonEmptyAndAvailable) {
+								this.domModal.querySelector('.js-input').focus();
+							}
+
+							if (data.statementObject.isColumnAvailable(newColumnName)) {
+								nonEmptyAndAvailable = false;
+								this.domModal.querySelector('.js-input').focus();
+								notify.danger('Cannot rename column', 'The name is already in use');
+							}
+
+							if (newColumnName.match(/[^a-zA-Z0-9_]|^[0-9]/i)) {
+								nonEmptyAndAvailable = false;
+								this.domModal.querySelector('.js-input').focus();
+								notify.danger('Cannot rename column', 'The name is invalid');
+							}
+
+							return nonEmptyAndAvailable;
+						},
+						onResolve: function(accepted) {
+							return [ accepted, this.domModal.querySelector('.js-input').value ];
 						}
 					}),
 			};
@@ -129,7 +160,6 @@ window.App = (function() {
 								data.statementObject = data.statement.createObject(transaction.newDoc.toJSON().join(''));
 								if (data.statementObject) {
 									data.tableColumns = data.statementObject.getColumns();
-									console.log(data.tableColumns);
 
 									// outside of alpine this is a hacky way of accessing data
 									document.querySelector('body[x-data]').__x.$data.displayedTableColumns = data.tableColumns.slice(0);
@@ -323,6 +353,15 @@ window.App = (function() {
 							}
 
 							data.resetFilter = true;  // trick codeEditor in not doing double the work
+							cm.setText(data.statementObject.assemble());
+						}
+					});
+				},
+
+				renameColumn(column) {
+					data.modalRename.confirm(column).then(param => {
+						if (param[0] === true) {
+							data.statementObject.renameColumn(column, param[1]);
 							cm.setText(data.statementObject.assemble());
 						}
 					});
