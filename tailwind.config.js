@@ -95,6 +95,7 @@ module.exports = {
 	},
 	variants: {
 		display: ['group-hover'],
+		padding: [ 'group-hover' ],
 	},
 	plugins: [
 	],
