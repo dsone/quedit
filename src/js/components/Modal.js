@@ -108,7 +108,13 @@ Modal.prototype.hide = function(accepted) {
 };
 
 Modal.prototype.confirm = function(column) {
-	this.config.domContent.querySelectorAll('.js-column').forEach(el => el.innerText = column);
+	this.config.domContent.querySelectorAll('.js-column').forEach(el => {
+		if (el.nodeName === 'INPUT') {
+			el.value = column;
+		} else {
+			el.innerText = column;
+		}
+	});
 
 	return this.show();
 };

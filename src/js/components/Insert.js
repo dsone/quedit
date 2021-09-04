@@ -287,6 +287,34 @@ Insert.prototype.getValuesByColumn = function(column) {
 };
 
 /**
+ * Renames a column.
+ * 
+ * @param	string	oldColumn		The old column name.
+ * @param	string	newColumn		The new column name.
+ * @returns	boolean					Boolean indicating success.
+ */
+Insert.prototype.renameColumn = function(oldColumn, newColumn) {
+	try {
+		let colIndex = this.mapColumnToIndex[ oldColumn ];
+
+		if (colIndex === undefined) {
+			return false;
+		}
+
+		this.columns[ colIndex ] = newColumn;
+		this.mapColumnToIndex[ newColumn ] = colIndex;
+		delete this.mapColumnToIndex[ oldColumn ];
+
+		return true;
+	} catch (e) {
+		this.config.parent.notify('danger', e);
+		console.error(e);
+
+		return false;
+	}
+};
+
+/**
  * Removes an entire column, including their values.
  * 
  * @param	string	column	Name of the column to remove.

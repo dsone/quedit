@@ -5,7 +5,7 @@
 		<title>QuEdit</title>
 		<link href="dist/app.css" rel="stylesheet" />
 	</head>
-	<body class="w-full h-full p-0 m-0 overflow-hidden font-sans text-base bg-blue-100 xl:text-lg" x-data="App.start('.js-file', '.js-filterby', '.js-text-input', '#modal-template-delete', '#modal-template-add')">
+	<body class="w-full h-full p-0 m-0 overflow-hidden font-sans text-base bg-blue-100 xl:text-lg" x-data="App.start('.js-file', '.js-filterby', '.js-text-input', '#modal-template-delete', '#modal-template-add', '#modal-template-rename')">
 		<main class="absolute top-0 bottom-0 left-0 right-0 p-0 m-0">
 			<nav class="fixed top-0 left-0 right-0 flex flex-wrap items-center h-10 text-white bg-blue-900 shadow-sm">
 				<span class="inline-block">
@@ -54,9 +54,15 @@
 												<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 group-hover:hidden svg-col-left" :class="{ 'opacity-0': selectedColumn !== column }" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
 												<svg xmlns="http://www.w3.org/2000/svg" class="hidden w-4 h-4 group-hover:inline-block svg-col-left" :class="{ 'opacity-0': selectedColumn !== column }" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
 
-												<a href="#" class="block py-1 pl-6 pr-8 break-all" x-text="column"></a>
+												<a href="#" class="block py-1 pl-6 pr-6 transition-all duration-100 group-hover:pr-14 break-all" x-text="column"></a>
 
-												<svg xmlns="http://www.w3.org/2000/svg" class="right-0 hidden w-8 h-4 mr-1 transition-colors duration-300 rounded-sm group-hover:inline-block hover:text-red-800 svg-col-right hover:bg-red-100" :class="{ 'invisible': selectedColumn !== '' }" fill="none" viewBox="0 0 24 24" stroke="currentColor" @click.stop="removeValuesByColumn(column)">
+												<svg xmlns="http://www.w3.org/2000/svg" class="right-0 mr-7 hidden w-6 h-4 transition-colors duration-300 rounded-sm group-hover:inline-block hover:text-green-800 svg-col-right hover:bg-red-100" viewBox="0 0 20 20" fill="currentColor" :class="{ 'invisible': selectedColumn !== '' }" @click.stop="renameColumn(column)">
+													<title x-text="'Rename ' + column">Rename Column</title>
+													<path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" />
+													<path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 3 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd" />
+												</svg>
+
+												<svg xmlns="http://www.w3.org/2000/svg" class="right-0 hidden w-6 h-4 mr-1 transition-colors duration-300 rounded-sm group-hover:inline-block hover:text-red-800 svg-col-right hover:bg-red-100" :class="{ 'invisible': selectedColumn !== '' }" fill="none" viewBox="0 0 24 24" stroke="currentColor" @click.stop="removeValuesByColumn(column)">
 													<title x-text="'Remove ' + column">Remove Column</title>
 													<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
 												</svg>
@@ -186,11 +192,11 @@
 									</h3>
 									<div class="flex flex-row items-center justify-between mt-2">
 										<label class="flex-grow pr-3">Name:</label>
-										<input type="search" class="inline-block w-2/3 p-1 border-0 rounded shadow js-input focus:outline-none focus:ring focus:border-blue-300" placeholder="Name">
+										<input type="text" class="inline-block w-2/3 p-1 border-0 rounded shadow js-input focus:outline-none focus:ring focus:border-blue-300" placeholder="Name">
 									</div>
 									<div class="flex flex-row items-center justify-between mt-2">
 										<label class="flex-grow pr-3">Value:</label>
-										<input type="search" class="inline-block w-2/3 p-1 border-0 rounded shadow js-input-2 focus:outline-none focus:ring focus:border-blue-300" placeholder="Default value" value="NULL">
+										<input type="text" class="inline-block w-2/3 p-1 border-0 rounded shadow js-input-2 focus:outline-none focus:ring focus:border-blue-300" placeholder="Default value" value="NULL">
 									</div>
 								</div>
 							</div>
@@ -198,6 +204,56 @@
 						<div class="px-4 py-3 shadow-inner bg-gray-50 sm:px-6 sm:flex sm:justify-between">
 							<button type="button" class="inline-flex justify-center w-full px-4 py-2 text-base font-medium text-white bg-green-600 border border-transparent rounded-md shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 sm:ml-3 sm:w-auto sm:text-sm js-confirm">
 								Add
+							</button>
+							<button type="button" class="inline-flex justify-center w-full px-4 py-2 mt-3 text-base font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-200 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm js-abort">
+								Abort
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</template>
+
+		<template id="modal-template-rename" hidden>
+			<div class="fixed inset-0 z-10 hidden overflow-y-auto modal-add" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+				<div class="flex items-end justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+					<!--
+						Background overlay, show/hide based on modal state.
+					-->
+					<div class="fixed inset-0 bg-gray-500 bg-opacity-75 modal-backdrop" aria-hidden="true"></div>
+
+					<!-- This element is to trick the browser into centering the modal contents. -->
+					<span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+					<!--
+						Modal panel, show/hide based on modal state.
+					-->
+					<div class="inline-block overflow-hidden text-left align-bottom transition-all transform bg-white rounded-lg shadow-xl sm:my-8 sm:align-middle sm:max-w-lg sm:w-full modal-content">
+						<div class="px-4 pt-5 pb-5 bg-blue-100 sm:p-6 sm:pb-4">
+							<div class="sm:flex sm:items-start">
+								<div class="flex items-center justify-center flex-initial flex-shrink-0 w-12 h-12 mx-auto rounded-full sm:mx-0 sm:h-10 sm:w-10">
+									<svg xmlns="http://www.w3.org/2000/svg" class="text-green-600 w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+									</svg>
+								</div>
+								<div class="flex-grow mt-3 text-center text-black sm:mt-0 sm:ml-4 sm:text-left">
+									<h3 class="text-lg font-medium leading-6" id="modal-title">
+										Rename column
+									</h3>
+									<div class="flex flex-row items-center justify-between mt-2">
+										<label class="flex-grow pr-3">Old name:</label>
+										<input type="text" class="inline-block w-2/3 bg-gray-100 p-1 border-0 rounded shadow js-column focus:outline-none" placeholder="" value="">
+									</div>
+									<div class="flex flex-row items-center justify-between mt-2">
+										<label class="flex-grow pr-3">New name:</label>
+										<input type="text" class="inline-block w-2/3 p-1 border-0 rounded shadow js-input focus:outline-none focus:ring focus:border-blue-300" placeholder="" value="">
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="px-4 py-3 shadow-inner bg-gray-50 sm:px-6 sm:flex sm:justify-between">
+							<button type="button" class="inline-flex justify-center w-full px-4 py-2 text-base font-medium text-white bg-green-600 border border-transparent rounded-md shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 sm:ml-3 sm:w-auto sm:text-sm js-confirm">
+								Change
 							</button>
 							<button type="button" class="inline-flex justify-center w-full px-4 py-2 mt-3 text-base font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-200 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm js-abort">
 								Abort

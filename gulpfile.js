@@ -67,10 +67,10 @@ gulp.task('js', function() {
 });
 
 gulp.task('js:watch', function () {
-	return gulp.watch('src/js/**/*.js',  { interval: 1000, usePolling: true }, gulp.series('js'));
+	return gulp.watch('src/js/**/*.js', { interval: 1000, usePolling: true }, gulp.series('js'));
 });
 
 gulp.task('watch', function () {
-	gulp.watch([ './src/scss/**/*.scss', './www/**/*.html' ],  { interval: 1000, usePolling: true }, gulp.series('sass'));
-	gulp.watch('./src/js/**/*.js',  { interval: 1000, usePolling: true }, gulp.series('js'));
+	gulp.watch([ './src/scss/**/*.scss', './www/**/*.html' ], { interval: 1000, usePolling: true }, gulp.series('sass'));
+	gulp.watch('./src/js/**/*.js', { interval: 1000, usePolling: true }, gulp.series('js'));
 });
