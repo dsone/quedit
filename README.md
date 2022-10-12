@@ -55,7 +55,7 @@ When completed, there is a new folder called "_out_", inside is the non-distribu
 To create an executable Setup program, installing QuEdit into `%APPDATA%/Local` or your OS specific equivalent, use `npm run make`. 
   
 Read more about packaging here:
-https://www.electronjs.org/docs/latest/get-started/quick-start#package-and-distribute-your-application
+https://www.electronjs.org/docs/latest/tutorial/quick-start#package-and-distribute-your-application
 
 ## How to use
 
